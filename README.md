@@ -36,7 +36,7 @@ Panel letters drawn by component scripts can differ from the final figures; fina
 | Fig 1E (within- vs between-module correlation; one-sided Mann–Whitney over bait pairs) | `make_figure1E_within_between.py` |
 | Fig 1G (clique membership from Alex's clique table) | `make_figure1_cliques.py` |
 | Fig 2A (transcript heatmap with intron strip) | `make_figure2A_introns.py` |
-| Fig 2B–E (cluster profiles, intron distribution, gene length, dwell score) | `make_figure2.py` |
+| Fig 2B–E (cluster profiles, intron distribution, dwell score, gene length) | `make_figure2.py` |
 | Fig 2F (enrichment of non-coding RNA classes per bait relative to total RNA) | `make_figure2F_class_enrichment.py` (reads `data/geo_fpkm/`) |
 | Fig 3A–D (multi-omics heatmap, CID boundary proximity, promoter class, dwell vs length) | `make_figure3.py` (heatmap ordered by the Supp Fig 6A dendrogram) |
 | Supp Fig 1B–D (panel A, Coomassie gels, placed in Illustrator) | `make_figureS1.py` |
