@@ -15,7 +15,7 @@ python promoter_class_analysis.py \
     --dwell    rna_dwell_scores.tsv \
     --clusters rna_gene_clusters.tsv \
     --rhee     Rhee_SuppData1_revised.xls \
-    --abacus   "RNP ouptut without heavy data copy 2 (version 1).xlsx" \
+    --gff      data/saccharomyces_cerevisiae.20260618.gff \
     --outdir   results/
 
 Outputs
@@ -109,16 +109,28 @@ def load_rhee(path: str) -> pd.DataFrame:
     return df[["gene_class_1", "gene_class_2", "TBP", "Pol II", "mismatch"]]
 
 
-def load_rp_gene_ids(abacus_path: str) -> set:
+def load_rp_gene_ids(gff_path: str) -> set:
     """
-    Extract ribosomal protein gene systematic ORF IDs from ABACUS DEFLINE column.
-    RP genes defined as common name matching ^RPL or ^RPS.
+    Ribosomal-protein genes from the SGD GFF (same rule as make_figure2A_introns.py):
+    nuclear ORFs (Y[A-P][LR]nnn[CW], incl. -A/-B suffixed ORFs) whose standard gene name starts with RPL or RPS.
+    (Previously taken from the lab ABACUS export; switched 2026-10-08.)
     """
-    ab = pd.read_excel(abacus_path, sheet_name="ABACUS_output")
-    ab["gene_name"] = ab["DEFLINE"].str.extract(r"^([A-Za-z0-9_\-]+)")[0].str.upper()
-    name_to_syst = dict(zip(ab["gene_name"], ab["PROTID"]))
-    rp_ids = {v for k, v in name_to_syst.items() if re.match(r"RPL\d|RPS\d|RPL[A-Z]", k)}
-    return rp_ids
+    rp = set()
+    with open(gff_path) as fh:
+        for line in fh:
+            if line.startswith('##FASTA'):
+                break
+            if line.startswith('#'):
+                continue
+            parts = line.rstrip('\n').split('\t')
+            if len(parts) < 9 or parts[2] != 'gene':
+                continue
+            id_m = re.search(r'ID=([^;]+)', parts[8])
+            gene_m = re.search(r'gene=([^;]+)', parts[8])
+            if id_m and gene_m and re.match(r'^Y[A-P][LR]\d{3}[CW](-[A-Z])?$', id_m.group(1)) \
+                    and re.match(r'^RP[LS]\d', gene_m.group(1), re.IGNORECASE):
+                rp.add(id_m.group(1))
+    return rp
 
 
 # ── Annotation ─────────────────────────────────────────────────────────────────
@@ -245,7 +257,7 @@ def make_figure(ann: pd.DataFrame, rna: pd.DataFrame, stat_results: dict,
     ax_a = fig.add_subplot(gs_fig[0, 0])
     mat = np.array([profiles[fc][0].values for fc in FOUR_CLASSES])
     im = ax_a.imshow(mat, aspect="auto", cmap="RdBu_r", vmin=0.10, vmax=0.50,
-                     interpolation="nearest")
+                     interpolation="nearest", rasterized=True)
     ax_a.set_xticks(range(len(BAITS)))
     ax_a.set_xticklabels(BAITS, rotation=45, ha="right", fontsize=8.5)
     ax_a.set_yticks(range(4))
@@ -383,7 +395,8 @@ def parse_args():
     p.add_argument("--dwell",    required=True, help="rna_dwell_scores.tsv")
     p.add_argument("--clusters", required=True, help="rna_gene_clusters.tsv")
     p.add_argument("--rhee",     required=True, help="Rhee_SuppData1_revised.xls")
-    p.add_argument("--abacus",   required=True, help="ABACUS output Excel file")
+    p.add_argument("--gff",      default="data/saccharomyces_cerevisiae.20260618.gff",
+                   help="SGD GFF (RP gene list)")
     p.add_argument("--outdir",   default=".",   help="Output directory (default: .)")
     return p.parse_args()
 
@@ -398,7 +411,7 @@ def main():
     dwell    = load_dwell(args.dwell)
     clusters = load_clusters(args.clusters)
     rhee     = load_rhee(args.rhee)
-    rp_ids   = load_rp_gene_ids(args.abacus)
+    rp_ids   = load_rp_gene_ids(args.gff)
 
     print("Building annotation table...")
     ann = build_annotation(rna, dwell, clusters, rhee, rp_ids)

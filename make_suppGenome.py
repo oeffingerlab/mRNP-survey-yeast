@@ -24,14 +24,15 @@ import warnings
 warnings.filterwarnings('ignore')
 
 import sys
-sys.path.insert(0, "/sessions/lucid-modest-goldberg/mnt/outputs/")
+import os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from figure_style import (apply_style, GROUP_COLORS, BAIT_GROUP_RNA,
                            fmt_bait, fmt_baits,
                            CLUSTER_COLORS, CLUSTER_ORDER, CLUSTER_LABELS)
 apply_style()
 
-OUTDIR  = "/sessions/lucid-modest-goldberg/mnt/MS results/"
-DATADIR = "/sessions/lucid-modest-goldberg/mnt/outputs/"
+OUTDIR  = "output/"
+DATADIR = "data/"
 
 # ── Load data ─────────────────────────────────────────────────────────────────
 df_prom = pd.read_csv(DATADIR + "promoter_annotated.tsv",  sep='\t', index_col=0)
@@ -50,17 +51,17 @@ for c in ['tata_taf_clean', 'gene_class_1', 'gene_class', 'TBP', 'promoter_class
 dwell_col = 'class' if 'class' in df_prom.columns else None
 stage_col = 'peak_stage' if 'peak_stage' in df_prom.columns else None
 
-# ── Colour scheme — mapped to the ACTUAL tata_taf_clean values ───────────────
+# ── Color scheme — mapped to the ACTUAL tata_taf_clean values ───────────────
 # Classic SAGA: TATA-containing / TAF1-depleted → amber-orange
 # Classic TFIID: TATA-less / TAF1-enriched       → teal
 # Intermediate classes: clearly distinct hues
-# No-data (' / ')                                  → light grey
+# No-data (' / ')                                  → light gray
 PROM_COLORS = {
     'TATA-less / TAF1-enriched':         '#1A7A8A',  # teal     — constitutive TFIID-dominated
     'TATA-containing / TAF1-depleted':   '#E07B1A',  # amber    — classic SAGA / stress-responsive
     'TATA-less / TAF1-depleted':         '#8E44AD',  # purple   — TATA-less but SAGA-like
     'TATA-containing / TAF1-enriched':   '#2E8B57',  # sea-green — unusual TATA+TFIID
-    ' / ':                               '#C8CDD0',  # lt grey  — no classification
+    ' / ':                               '#C8CDD0',  # lt gray  — no classification
     # Legacy / fallback keys
     'SAGA':    '#E07B1A',
     'TATA':    '#8E44AD',
@@ -125,7 +126,7 @@ if dwell_col and prom_col:
     for col in cross_pct.columns:
         vals = cross_pct.loc[dwell_order, col].fillna(0).values
         ax_a.bar(x_a, vals, bottom=bottom_a, width=0.7,
-                 color=prom_color(col), edgecolor='grey', linewidth=0.3, label=col)
+                 color=prom_color(col), edgecolor='gray', linewidth=0.3, label=col)
         bottom_a += vals
     ax_a.set_xticks(x_a)
     ax_a.set_xticklabels(dwell_order, fontsize=8, rotation=35, ha='right')
@@ -150,7 +151,7 @@ else:
         for col in cross_pct.columns:
             vals = cross_pct.loc[dwell_order, col].fillna(0).values
             ax_a.bar(x_a, vals, bottom=bottom_a, width=0.7,
-                     color=prom_color(str(col)), edgecolor='grey',
+                     color=prom_color(str(col)), edgecolor='gray',
                      linewidth=0.3, label=str(col))
             bottom_a += vals
         ax_a.set_xticks(x_a)
@@ -185,7 +186,7 @@ if prom_col and 'dwell_auc' in df_prom.columns:
         parts_b = ax_b.violinplot(vdata_b, positions=range(len(prom_order)),
                                    showmedians=True, showextrema=False, widths=0.65)
         for pc, col in zip(parts_b['bodies'], pcolors_b):
-            pc.set_facecolor(col); pc.set_alpha(0.7); pc.set_edgecolor('grey')
+            pc.set_facecolor(col); pc.set_alpha(0.7); pc.set_edgecolor('gray')
         parts_b['cmedians'].set_color('black'); parts_b['cmedians'].set_linewidth(1.5)
         ax_b.set_xticks(range(len(prom_order)))
         ax_b.set_xticklabels([short_label(p) for p in prom_order],
@@ -211,7 +212,7 @@ elif 'TBP' in df_prom.columns and 'dwell_auc' in df_prom.columns:
         parts_b = ax_b.violinplot(vdata_b, positions=range(len(prom_order)),
                                    showmedians=True, showextrema=False, widths=0.65)
         for pc, col in zip(parts_b['bodies'], pcolors_b):
-            pc.set_facecolor(col); pc.set_alpha(0.7); pc.set_edgecolor('grey')
+            pc.set_facecolor(col); pc.set_alpha(0.7); pc.set_edgecolor('gray')
         parts_b['cmedians'].set_color('black'); parts_b['cmedians'].set_linewidth(1.5)
         ax_b.set_xticks(range(len(prom_order)))
         ax_b.set_xticklabels([str(t) for t in prom_order],
@@ -241,7 +242,7 @@ if len(df_cid_c) > 5:
 ax_c.set_xlabel('CID boundary insulation strength', fontsize=8)
 ax_c.set_ylabel('Mean dwell score of nearby genes', fontsize=8)
 ax_c.set_title('CID boundary strength vs. local mRNP dwell score\n'
-               '(each point = one Hi-C domain boundary)', fontsize=9)
+               '(each point = one Micro-C domain boundary)', fontsize=9)
 ax_c.spines['top'].set_visible(False); ax_c.spines['right'].set_visible(False)
 ax_c.text(-0.12, 1.06, 'C', transform=ax_c.transAxes, fontsize=14, fontweight='bold')
 
@@ -258,7 +259,7 @@ if 'saga_frac' in df_cid.columns and 'mean_dwell_nearby' in df_cid.columns:
     ax_d.set_xlabel('Fraction SAGA-regulated genes nearby', fontsize=8)
     ax_d.set_ylabel('Mean dwell score of nearby genes', fontsize=8)
     ax_d.set_title('CID boundary promoter composition vs. dwell score\n'
-                   '(SAGA fraction on x; TFIID fraction as colour)', fontsize=9)
+                   '(SAGA fraction on x; TFIID fraction as color)', fontsize=9)
     if len(df_cid_d) > 5:
         sl, ic, r, p, _ = stats.linregress(df_cid_d['saga_frac'],
                                              df_cid_d['mean_dwell_nearby'])
@@ -273,7 +274,7 @@ else:
     parts_d = ax_d.violinplot(vdata_d, positions=range(len(CLUSTER_ORDER)),
                                showmedians=True, showextrema=False, widths=0.7)
     for pc, k in zip(parts_d['bodies'], CLUSTER_ORDER):
-        pc.set_facecolor(CLUSTER_COLORS[k]); pc.set_alpha(0.7); pc.set_edgecolor('grey')
+        pc.set_facecolor(CLUSTER_COLORS[k]); pc.set_alpha(0.7); pc.set_edgecolor('gray')
     parts_d['cmedians'].set_color('black'); parts_d['cmedians'].set_linewidth(1.5)
     ax_d.set_xticks(range(len(CLUSTER_ORDER)))
     ax_d.set_xticklabels([CLUSTER_LABELS[k].split('\n')[0] for k in CLUSTER_ORDER],
@@ -285,7 +286,7 @@ ax_d.spines['top'].set_visible(False); ax_d.spines['right'].set_visible(False)
 ax_d.text(-0.14, 1.06, 'D', transform=ax_d.transAxes, fontsize=14, fontweight='bold')
 
 fig.suptitle('Supplementary Figure  |  Genomic and Chromatin Context of mRNP Co-purification\n'
-             '(promoter class, dwell scores, CID boundaries, Hi-C domain context)',
+             '(promoter class, dwell scores, CID boundaries, Micro-C domain context)',
              fontsize=11, fontweight='bold', y=0.975)
 
 out = OUTDIR + "figureS_GenomeContext.pdf"

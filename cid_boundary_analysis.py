@@ -27,9 +27,9 @@ Outputs
 
 References
 ----------
-Hsieh HS & Pugh BF (2015) Mapping Nucleosome Resolution Chromosome Folding
-  in Yeast by Micro-C. Molecular Cell 62(1):90-104.
-  doi:10.1016/j.molcel.2015.05.002
+Hsieh T-HS, Weiner A, Lajoie B, Dekker J, Friedman N, Rando OJ (2015)
+  Mapping Nucleosome Resolution Chromosome Folding in Yeast by Micro-C.
+  Cell 162(1):108-119. doi:10.1016/j.cell.2015.05.048
 
 Author  : mRNP Maturation Project (Oeffinger Lab)
 Date    : June 2026
@@ -61,17 +61,11 @@ ROMAN = {
 }
 
 # RNA cluster definitions (k=8 Ward linkage on AP-RNAseq bait-mean matrix)
-CLUSTER_LABELS = {
-    1: "C1 Export", 2: "C2 TREX-2", 3: "C3 3'proc", 4: "C4 THO/TREX",
-    5: "C5 hnRNP",  6: "C6 CBC/hnRNP", 7: "C7 GFD1",  8: "C8 Splicing/RP",
-}
-CLUSTER_COLORS = {
-    1: "#C04010", 2: "#7030A0", 3: "#CC2222", 4: "#8ABEDE",
-    5: "#5AAE45", 6: "#2D6BB5", 7: "#888888", 8: "#E07B2A", -1: "#CCCCCC",
-}
+CLUSTER_LABELS = {1: "C1\nCBC/splicing/Npl3p", 2: "C2\nhnRNP/Poly(A)", 3: "C3\nTHO/TREX", 4: "C4\nHrp1p", 5: "C5\n3'end proc.", 6: "C6\nTREX-2", 7: "C7\nGfd1p/CBC", 8: "C8\nExport"}
+CLUSTER_COLORS = {1: '#A7948D', 2: '#78B8EF', 3: '#8EC691', 4: '#66CDDA', 5: '#FEE886', 6: '#FDBA66', 7: '#BB7CCC', 8: '#EF8886'}
 
 # Pathway cluster order (early → late) for Panel C
-CLUSTER_ORDER = [8, 6, 7, 5, 4, 2, 3, 1]
+CLUSTER_ORDER = [1, 2, 3, 4, 5, 6, 7, 8]
 
 # Promoter class definitions (Rhee & Pugh 2012)
 FOUR_CLASSES = [

@@ -1,9 +1,12 @@
 """
 Figure 1 panel remake – AP-MS focused
-Panels: A/B (placeholders), C (AP-MS heatmap), D (Pearson), E (Shortest path), F (RNA-seq HCL)
+Panels (letters as in the final Figure 1): A/B (placeholders for the schematics),
+C (AP-MS heatmap), D (Pearson bait-bait correlation), F (shared nuclear preys).
+Panel E comes from make_figure1E_within_between.py, panel G from make_figure1_cliques.py.
 Layout: Row 0: A (2/3 width) | B (1/3 width)
-        Row 1: C | D | E  (equally sized)
-        Row 2: F (full width)
+        Row 1: C | D | F  (equally sized)
+(The former AP-RNA-seq clustering panel is not part of Figure 1; see Figure 2A,
+ make_figure2A_introns.py.)
 Fixes: bait names in protein convention (Cbp80p etc.), group color strips on RIGHT,
        correct top-to-bottom strip direction, vertical legends next to E and F.
 """
@@ -20,14 +23,16 @@ import warnings
 warnings.filterwarnings('ignore')
 
 import sys
-sys.path.insert(0, "/sessions/lucid-modest-goldberg/mnt/outputs/")
+import os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from figure_style import (apply_style, GROUP_COLORS, BAIT_GROUP_APMS as BAIT_GROUP,
                            fmt_bait, fmt_baits,
                            CMAP_APMS, CMAP_CORR, CMAP_RNA)
 apply_style()
 
-OUTDIR  = "/sessions/lucid-modest-goldberg/mnt/MS results/"
-DATADIR = "/sessions/lucid-modest-goldberg/mnt/outputs/"
+OUTDIR  = "output/"
+os.makedirs(OUTDIR, exist_ok=True)
+DATADIR = "data/"
 
 PATHWAY_ORDER_APMS = [
     'CBP20','CBP80',
@@ -117,12 +122,12 @@ def legend_patches(baits):
 # ════════════════════════════════════════════════════════════════════════════
 # BUILD FIGURE
 # ════════════════════════════════════════════════════════════════════════════
-fig = plt.figure(figsize=(11, 6.25))
+fig = plt.figure(figsize=(11, 4.75))
 fig.patch.set_facecolor('white')
 
 # right=0.86 reserves 14% right margin for legends + colorbars outside panels
-gs = gridspec.GridSpec(3, 3, figure=fig,
-                        height_ratios=[0.7, 2.76, 1.5],
+gs = gridspec.GridSpec(2, 3, figure=fig,
+                        height_ratios=[0.7, 2.76],
                         hspace=0.45, wspace=0.30,
                         left=0.08, right=0.86, top=0.94, bottom=0.05)
 
@@ -152,7 +157,7 @@ ax_b.text(-0.06, 1.10, 'B', transform=ax_b.transAxes, fontsize=16, fontweight='b
 ax_c = fig.add_subplot(gs[1, 0])
 log_apms = np.log10(df_apms.values + 1)
 im_c = ax_c.imshow(log_apms.T, aspect='auto', cmap=CMAP_APMS,
-                    vmin=0, vmax=np.percentile(log_apms[log_apms>0], 95))
+                    vmin=0, vmax=np.percentile(log_apms[log_apms>0], 95), rasterized=True)
 ax_c.set_title('AP-MS Spectral Counts\n(bait × prey)', fontsize=9, fontweight='bold', pad=5)
 ax_c.set_xlabel('Prey proteins', fontsize=4)
 ax_c.set_ylabel('Baits', fontsize=4)
@@ -170,7 +175,7 @@ ax_c.text(-0.22, 1.05, 'C', transform=ax_c.transAxes, fontsize=16, fontweight='b
 ax_d = fig.add_subplot(gs[1, 1])
 pv = df_pearson.values.copy()
 pv[np.eye(len(df_pearson), dtype=bool)] = np.nan
-im_d = ax_d.imshow(pv, aspect='equal', cmap=CMAP_CORR, vmin=-0.2, vmax=1.0)
+im_d = ax_d.imshow(pv, aspect='equal', cmap=CMAP_CORR, vmin=-0.2, vmax=1.0, rasterized=True)
 ax_d.set_title('Pearson Correlation\n(bait × bait)', fontsize=9, fontweight='bold', pad=5)
 ax_d.set_xticks(range(len(pearson_ordered)))
 ax_d.set_xticklabels(fmt_baits(pearson_ordered), fontsize=4, rotation=90, ha='right')
@@ -183,11 +188,11 @@ cb_d.set_label('Pearson r', fontsize=5.5)
 cb_d.ax.tick_params(labelsize=5)
 ax_d.text(-0.22, 1.10, 'D', transform=ax_d.transAxes, fontsize=16, fontweight='bold')
 
-# ── Panel E: Shared nuclear prey count (bait × bait) ──────────────────────
+# ── Panel F (variable ax_e): Shared nuclear prey count (bait × bait) ───────
 ax_e = fig.add_subplot(gs[1, 2])
 vmax_e = int(np.nanmax(shared_prey_plot))
 im_e = ax_e.imshow(shared_prey_plot, aspect='equal',
-                    cmap='Blues', vmin=0, vmax=vmax_e)
+                    cmap='Blues', vmin=0, vmax=vmax_e, rasterized=True)
 ax_e.set_title('Shared Nuclear Preys\n(bait × bait)', fontsize=9, fontweight='bold', pad=5)
 ax_e.set_xticks(range(len(apms_baits)))
 ax_e.set_xticklabels(fmt_baits(apms_baits), fontsize=4, rotation=90, ha='right')
@@ -198,9 +203,9 @@ strip_right(ax_e, apms_baits)
 cb_e = plt.colorbar(im_e, ax=ax_e, fraction=0.072, shrink=0.70, pad=0.06)
 cb_e.set_label('# shared nuclear preys', fontsize=5.5)
 cb_e.ax.tick_params(labelsize=5)
-ax_e.text(-0.22, 1.10, 'E', transform=ax_e.transAxes, fontsize=16, fontweight='bold')
+ax_e.text(-0.22, 1.10, 'F', transform=ax_e.transAxes, fontsize=16, fontweight='bold')
 
-# Legend next to E (vertical, just right of panel E / right margin)
+# Legend next to F (vertical, just right of panel E / right margin)
 ax_e.legend(handles=legend_patches(apms_baits),
             loc='upper left', bbox_to_anchor=(1.42, 1.02),
             ncol=1, fontsize=5.0, frameon=True,
@@ -208,33 +213,7 @@ ax_e.legend(handles=legend_patches(apms_baits),
             borderaxespad=0, labelspacing=0.25,
             markerscale=0.7, handlelength=0.8, handletextpad=0.3)
 
-# ── Panel F: RNA-seq HCL ───────────────────────────────────────────────────
-ax_f = fig.add_subplot(gs[2, :])
-im_f = ax_f.imshow(df_rna_sorted.values.T, aspect='auto',
-                    cmap=CMAP_RNA, vmin=0, vmax=1.0)
-ax_f.set_title('AP-RNA-seq Hierarchical Clustering  (genes × baits, max-FPKM normalized)',
-               fontsize=9, fontweight='bold', pad=5)
-ax_f.set_xlabel(f'Genes ({len(df_rna_sorted)} co-enriched, clustered Pearson/avg-linkage)',
-                fontsize=5)
-ax_f.set_ylabel('Baits (pathway order)', fontsize=5)
-ax_f.set_yticks(range(len(rna_baits)))
-ax_f.set_yticklabels(fmt_baits(rna_baits), fontsize=4)
-ax_f.set_xticks([])
-strip_right(ax_f, rna_baits, w=STRIP_W/2)
-cb_f = plt.colorbar(im_f, ax=ax_f, fraction=0.020, shrink=0.7, pad=0.08, orientation='vertical')
-cb_f.set_label('Enrichment (max=1)', fontsize=5.5)
-cb_f.ax.tick_params(labelsize=5)
-ax_f.text(-0.07, 1.05, 'F', transform=ax_f.transAxes, fontsize=16, fontweight='bold')
-
-# Legend next to F (vertical, just right of panel F / right margin)
-ax_f.legend(handles=legend_patches(rna_baits),
-            loc='upper left', bbox_to_anchor=(1.16, 1.02),
-            ncol=1, fontsize=5.0, frameon=True,
-            title='Functional group', title_fontsize=5.5,
-            borderaxespad=0, labelspacing=0.25,
-            markerscale=0.7, handlelength=0.8, handletextpad=0.3)
-
-outpath = OUTDIR + "figure1_panels_CDEF.pdf"
+outpath = OUTDIR + "figure1_panels_CDF.pdf"
 fig.savefig(outpath, format='pdf', bbox_inches='tight')
 plt.close()
 print(f"Saved: {outpath}")

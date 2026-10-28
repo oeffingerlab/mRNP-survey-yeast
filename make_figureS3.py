@@ -1,9 +1,9 @@
 """
-Figure S7 — Multi-omics Clustering Robustness
+Supplemental Figure 6 — Multi-omics clustering robustness
 A: Multi-omics bait dendrogram (AP-MS + AP-RNA-seq combined Pearson, average linkage)
 B: PCA of combined bait-bait correlation matrix
-C: Full combined correlation matrix ordered by cluster
-D: Force-directed cluster network (combined r > 0.35)
+C: Full combined correlation matrix ordered by functional module
+D: Functional-module interaction network (combined r > 0.35; fixed circular within-module layout)
 Colors match the exact palette from the original Illustrator files.
 """
 import numpy as np
@@ -24,14 +24,15 @@ import warnings
 warnings.filterwarnings('ignore')
 
 import sys
-sys.path.insert(0, "/sessions/lucid-modest-goldberg/mnt/outputs/")
+import os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from figure_style import (apply_style, GROUP_COLORS, BAIT_GROUP_APMS,
                            fmt_bait, fmt_baits, CMAP_CORR,
                            PATHWAY_ORDER_RNA, PATHWAY_ORDER_APMS)
 apply_style()
 
-OUTDIR  = "/sessions/lucid-modest-goldberg/mnt/MS results/"
-DATADIR = "/sessions/lucid-modest-goldberg/mnt/outputs/"
+OUTDIR  = "output/"
+DATADIR = "data/"
 
 # ── Load data ──────────────────────────────────────────────────────────────
 df_apms = pd.read_csv(DATADIR + "apms_nuclear_matrix.tsv", sep='\t', index_col=0)
@@ -87,10 +88,11 @@ bait_colors = [GROUP_COLORS.get(BAIT_GROUP_APMS.get(b,''), '#CCCCCC') for b in s
 # ── Figure layout ──────────────────────────────────────────────────────────
 fig = plt.figure(figsize=(22, 26))
 fig.patch.set_facecolor('white')
-fig.suptitle('Figure S7 | Multi-omics Clustering Robustness',
+fig.suptitle('Supplemental Figure 6 | Multi-omics clustering robustness',
              fontsize=13, y=0.99)
 
 gs = gridspec.GridSpec(2, 2, figure=fig,
+                        height_ratios=[1, 1],
                         hspace=0.38, wspace=0.32,
                         left=0.06, right=0.97, top=0.96, bottom=0.04)
 
@@ -100,49 +102,41 @@ grp_patches = [mpatches.Patch(color=c, label=g) for g, c in GROUP_COLORS.items()
                if any(BAIT_GROUP_APMS.get(b)==g for b in shared)]
 
 # ════════════════════════════════════════════════════════════════════════════
-# Panel A — Multi-omics bait dendrogram
+# Panel A — Multi-omics bait dendrogram (80% of cell height — 20% smaller than B/C/D)
 # ════════════════════════════════════════════════════════════════════════════
-ax_dend = fig.add_subplot(gs[0, 0])
+gs_a = gridspec.GridSpecFromSubplotSpec(2, 1, subplot_spec=gs[0, 0],
+                                         height_ratios=[4, 1], hspace=0)
+ax_dend = fig.add_subplot(gs_a[0])
 
 dend = dendrogram(link_multi, labels=shared, ax=ax_dend,
                   orientation='top', color_threshold=0,
                   above_threshold_color='black',
                   leaf_font_size=7)
 
-# Color leaf labels by functional group
+# Leaf labels: BLACK, protein convention (Cbp80p) per standing style rules
+ax_dend.set_xticklabels([fmt_bait(t.get_text()) for t in ax_dend.get_xticklabels()])
 for lbl in ax_dend.get_xticklabels():
-    bait = lbl.get_text().upper()
-    col  = GROUP_COLORS.get(BAIT_GROUP_APMS.get(bait, ''), '#555555')
-    lbl.set_color(col)
+    lbl.set_color('black')
     lbl.set_fontweight('bold')
 
-# Annotate cluster blocks below the dendrogram
+# Per-leaf MODULE markers: one square under each leaf, colored by that bait's
+# module. Replaces spanning boxes (which implied a module is one contiguous
+# block; members are actually split across the tree, e.g. Sub2p sits with Thp2p).
 leaf_order = dend['leaves']
-leaf_names  = [shared[i] for i in leaf_order]
-clust_ids = {b: CLUSTER_4.get(b, 0) for b in shared}
+leaf_names = [shared[i] for i in leaf_order]
 
 ax_dend_ylim = ax_dend.get_ylim()
-bar_y = ax_dend_ylim[0] - 0.03 * (ax_dend_ylim[1] - ax_dend_ylim[0])
-ax_dend.set_ylim(bar_y - 0.06 * (ax_dend_ylim[1] - ax_dend_ylim[0]), ax_dend_ylim[1])
-
-prev_cl = clust_ids[leaf_names[0]]
-block_start = 0
-block_info = []
-for i, nm in enumerate(leaf_names):
-    cl = clust_ids[nm]
-    if cl != prev_cl or i == len(leaf_names)-1:
-        block_info.append((block_start, i-1 if cl != prev_cl else i, prev_cl))
-        block_start = i
-        prev_cl = cl
+span  = ax_dend_ylim[1] - ax_dend_ylim[0]
+bar_y = ax_dend_ylim[0] - 0.05 * span
+sq_h  = 0.035 * span
+ax_dend.set_ylim(bar_y - 0.03 * span, ax_dend_ylim[1])
 
 import matplotlib.patches as _mp2
-for (bstart, bend, cl_id) in block_info:
-    x0 = bstart * 10 + 5
-    x1 = (bend + 1) * 10 - 5
-    col = CLUSTER_COLS.get(cl_id, '#CCCCCC')
-    ax_dend.add_patch(_mp2.FancyBboxPatch((x0, bar_y), x1-x0,
-                    0.03*(ax_dend_ylim[1]-ax_dend_ylim[0]),
-                    boxstyle="round,pad=0.5", color=col, alpha=0.7,
+for i, nm in enumerate(leaf_names):
+    col = CLUSTER_COLS.get(CLUSTER_4.get(nm, 0), '#CCCCCC')
+    xc  = i * 10 + 5                      # scipy leaf centers: 5, 15, 25, ...
+    ax_dend.add_patch(_mp2.Rectangle((xc - 2.6, bar_y), 5.2, sq_h,
+                    facecolor=col, edgecolor='white', linewidth=0.6,
                     transform=ax_dend.transData, clip_on=False))
 
 ax_dend.set_title('Multi-omics Bait Dendrogram\n'
@@ -156,39 +150,25 @@ ax_dend.text(-0.08, 1.04, 'A', transform=ax_dend.transAxes, fontsize=16, fontwei
 # Panel B — PCA scatter
 # ════════════════════════════════════════════════════════════════════════════
 ax_a = fig.add_subplot(gs[0, 1])
-from matplotlib.patches import Polygon as MplPolygon
-from scipy.spatial import ConvexHull
-
 pca    = PCA(n_components=2)
 coords = pca.fit_transform(corr_comb.values)
 var_exp = pca.explained_variance_ratio_ * 100
 
-for k in [1,2,3,4]:
-    idx = [i for i,b in enumerate(shared) if CLUSTER_4.get(b,0)==k]
-    if len(idx) >= 3:
-        pts = coords[idx]
-        try:
-            hull = ConvexHull(pts)
-            hp = pts[hull.vertices]
-            hp = np.vstack([hp, hp[0]])
-            ax_a.fill(hp[:,0], hp[:,1], color=CLUSTER_COLS[k], alpha=0.18, zorder=1)
-            ax_a.plot(hp[:,0], hp[:,1], color=CLUSTER_COLS[k], linewidth=1.2, alpha=0.5, zorder=2)
-        except Exception:
-            pass
-
+# Convex-hull polygons removed (misleading for small n and to computational
+# readers). Points colored by module (matches the module legend); labels black.
 for i, b in enumerate(shared):
-    color = GROUP_COLORS.get(BAIT_GROUP_APMS.get(b,''), '#CCCCCC')
+    color = CLUSTER_COLS.get(CLUSTER_4.get(b, 0), '#CCCCCC')
     ax_a.scatter(coords[i,0], coords[i,1], s=100, color=color,
                  edgecolors='white', linewidths=1.3, zorder=4)
     ax_a.text(coords[i,0]+0.012, coords[i,1]+0.008, fmt_bait(b),
-              fontsize=8, color='#222222', zorder=5)
+              fontsize=8, color='black', zorder=5)
 
 ax_a.set_xlabel(f'PC1 ({var_exp[0]:.1f}% variance)', fontsize=10)
 ax_a.set_ylabel(f'PC2 ({var_exp[1]:.1f}% variance)', fontsize=10)
-ax_a.set_title('PCA of Combined AP-MS + AP-RNA-seq\nBait Correlation Matrix', fontsize=11)
+ax_a.set_title('PCA of the combined AP-MS + AP-RNA-seq\nbait correlation matrix (same matrix as panels A, C, D)', fontsize=11)
 ax_a.spines['top'].set_visible(False); ax_a.spines['right'].set_visible(False)
 ax_a.legend(handles=legend_patches, fontsize=8, loc='lower right',
-            title='Multi-omics cluster', title_fontsize=8.5)
+            title='Functional module', title_fontsize=8.5)
 ax_a.text(-0.08, 1.04, 'B', transform=ax_a.transAxes, fontsize=16, fontweight='bold')
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -202,7 +182,7 @@ for k in [1,2,3,4]:
 corr_ord = corr_comb.loc[ordered, ordered].values.copy()
 np.fill_diagonal(corr_ord, np.nan)
 
-im = ax_b.imshow(corr_ord, cmap=CMAP_CORR, vmin=-0.2, vmax=1.0, aspect='equal')
+im = ax_b.imshow(corr_ord, cmap=CMAP_CORR, vmin=-0.2, vmax=1.0, aspect='equal', rasterized=True)
 ax_b.set_xticks(range(len(ordered)))
 ax_b.set_yticks(range(len(ordered)))
 ax_b.set_xticklabels(fmt_baits(ordered), fontsize=11, rotation=60, ha='right', color='black')
@@ -234,22 +214,21 @@ ax_b_right.axis('off'); _pbar_v(ax_b_right, ordered)
 ax_b_top = ax_b.inset_axes([0, 1.01, 1, 0.025])
 ax_b_top.axis('off'); _pbar_h(ax_b_top, ordered)
 
-plt.colorbar(im, ax=ax_b, shrink=0.5, pad=0.08, label='Pearson r')
-ax_b.set_title('Combined Correlation Matrix\n(ordered by multi-omics cluster)', fontsize=11)
-# Cluster legend (keep small, top-right inside colorbar area)
+# Colorbar via inset_axes so it does NOT steal space from ax_b's cell
+cax_b = ax_b.inset_axes([1.08, 0.25, 0.04, 0.50])
+cb_b = plt.colorbar(im, cax=cax_b, label='Pearson r')
+cb_b.ax.tick_params(labelsize=9)
+cb_b.set_label('Pearson r', fontsize=10)
+ax_b.set_title('Combined correlation matrix\n(ordered by functional module)', fontsize=11)
+# Cluster legend
 ax_b.legend(handles=legend_patches, fontsize=7.5, loc='upper left',
-            bbox_to_anchor=(1.55, 1.0), title='Cluster', title_fontsize=8)
-# Functional group legend to right of Panel B
-ax_b.figure.add_axes([0, 0, 0, 0])  # dummy; actual placement via ax_b legend below
-_grp_leg = ax_b.get_figure().add_axes([0, 0, 0.001, 0.001])  # tiny invisible placeholder
-_grp_leg.axis('off')
+            bbox_to_anchor=(1.20, 1.0), title='Functional module', title_fontsize=8)
+# Functional group legend
 _grp_patches_b = [mpatches.Patch(color=c, label=g) for g, c in GROUP_COLORS.items()
                   if any(BAIT_GROUP_APMS.get(b,'') == g for b in shared)]
-ax_b.figure.legends.clear()  # remove any auto-placed fig legends
-# Use a second legend on ax_b via add_artist
 from matplotlib.legend import Legend as _Leg
 _grp_legend_b = _Leg(ax_b, _grp_patches_b, [p.get_label() for p in _grp_patches_b],
-                      loc='upper left', bbox_to_anchor=(1.55, 0.48),
+                      loc='upper left', bbox_to_anchor=(1.20, 0.48),
                       fontsize=7.5, title='Functional group', title_fontsize=8,
                       frameon=True, ncol=1, handlelength=1.0)
 ax_b.add_artist(_grp_legend_b)
@@ -257,7 +236,7 @@ ax_b.text(-0.12, 1.04, 'C', transform=ax_b.transAxes, fontsize=16, fontweight='b
 
 
 # ════════════════════════════════════════════════════════════════════════════
-# Panel D — Cluster network with fixed circular within-cluster layout
+# Panel D — Functional-module network with fixed circular within-module layout
 # ════════════════════════════════════════════════════════════════════════════
 ax_d = fig.add_subplot(gs[1, 1])
 
@@ -350,7 +329,7 @@ for k in [1, 2, 3, 4]:
 ax_d.set_xlim(-3.1, 3.1); ax_d.set_ylim(-3.1, 3.1)
 ax_d.set_aspect('equal'); ax_d.axis('off')
 ax_d.set_title(f'Multi-omics Network (combined r > {THRESHOLD})\n'
-               f'Inner node = functional group; outer ring = cluster',
+               f'Inner node = functional group; outer ring = functional module',
                fontsize=11)
 ax_d.legend(handles=grp_patches, loc='lower center', ncol=3, fontsize=7.5,
             bbox_to_anchor=(0.5, -0.05),
@@ -358,7 +337,7 @@ ax_d.legend(handles=grp_patches, loc='lower center', ncol=3, fontsize=7.5,
 ax_d.text(-0.04, 1.04, 'D', transform=ax_d.transAxes, fontsize=16, fontweight='bold')
 
 # ── Save ───────────────────────────────────────────────────────────────────
-outpath = OUTDIR + "figureS7_multiomics_clustering.pdf"
+outpath = OUTDIR + "figureS6_multiomics_clustering.pdf"
 fig.savefig(outpath, format='pdf', bbox_inches='tight', facecolor='white')
 plt.close()
 print(f"Saved: {outpath}")

@@ -1,9 +1,11 @@
 """
-Figure S2 — AP-RNA-seq Extended Analysis
-A: Gene length density (KDE) per bait — ridge-plot style
-B: Bait-bait Pearson correlation heatmap (RNA-seq only)
-C: ncRNA class proportions per bait (stacked bars)
+Supplemental Figure 5, panels A, B and D (letters as in the final figure;
+panel C comes from make_figureS5C_length_scatter.py)
+A: Bait-bait Pearson correlation heatmap (AP-RNA-seq only)
+B: Gene length density (KDE) per bait — ridge-plot style
 D: Dwell score distribution per bait (violin)
+(The former ncRNA class-composition panel is not part of the final figure;
+ RNA classes are shown in Figure 2F.)
 
 Exclusions:
   - SNU114 excluded from all AP-RNA-seq analyses
@@ -21,15 +23,16 @@ import warnings
 warnings.filterwarnings('ignore')
 
 import sys, os
-sys.path.insert(0, "/sessions/lucid-modest-goldberg/mnt/outputs/")
+import os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from figure_style import (apply_style, GROUP_COLORS, BAIT_GROUP_APMS, fmt_bait, fmt_baits,
                            CLUSTER_COLORS, CMAP_RNA, CMAP_CORR, PATHWAY_ORDER_RNA,
                            CLUSTER_ORDER, CLUSTER_LABELS)
 BAIT_GROUP_RNA = {k: v for k, v in BAIT_GROUP_APMS.items() if k in PATHWAY_ORDER_RNA}
 apply_style()
 
-OUTDIR  = "/sessions/lucid-modest-goldberg/mnt/MS results/"
-DATADIR = "/sessions/lucid-modest-goldberg/mnt/outputs/"
+OUTDIR  = "output/"
+DATADIR = "data/"
 
 # ── Load data ──────────────────────────────────────────────────────────────
 df_rna   = pd.read_csv(DATADIR + "rnaseq_bait_means.tsv",  sep='\t', index_col=0)
@@ -52,7 +55,7 @@ NC_BAIT_COLS = {
     'SAC3':  [41,42], 'MEX67': [43,44,45], 'GFD1': [46],
     'DBP5':  [47,48,49], 'PAB1': [50,51,52,53],
 }
-nc_dir = "/sessions/lucid-modest-goldberg/mnt/Alex/RNA data April 2014/MOe/please filter and cluster/"
+nc_dir = "data/ncRNA/"
 nc_files = {
     'Coding': nc_dir + "all_codingRNAs_WTPOs_and_Mutants.xlsx",
     'SUT':    nc_dir + "all_SUTs_WTPOs_and_Mutants.xlsx",
@@ -97,7 +100,7 @@ nc_frac = nc_df.div(nc_df.sum(axis=1), axis=0)
 fig = plt.figure(figsize=(22, 22))
 fig.patch.set_facecolor('white')
 gs = gridspec.GridSpec(2, 2, figure=fig,
-                        height_ratios=[1.4, 1.2],
+                        height_ratios=[2.0, 1.2],
                         hspace=0.42, wspace=0.30,
                         left=0.07, right=0.97, top=0.94, bottom=0.05)
 
@@ -108,8 +111,8 @@ def bait_color_bar_h(ax, baits):
         ax.add_patch(mpatches.Rectangle((i/n, 0), 1/n, 1,
             color=c, transform=ax.transAxes, clip_on=False))
 
-# ── Panel A: Gene length KDE per bait (ridge-plot style) ──────────────────
-ax_a = fig.add_subplot(gs[0, 0])
+# ── Panel B (variable ax_a): Gene length KDE per bait (ridge-plot style) ──
+ax_a = fig.add_subplot(gs[0, 1])
 
 length_range = np.linspace(0, 10000, 300)
 n_baits = len(rna_baits)
@@ -144,23 +147,23 @@ ax_a.spines['top'].set_visible(False); ax_a.spines['right'].set_visible(False)
 # Color the y-axis tick labels by group
 for lbl in ax_a.get_yticklabels():
     bait = lbl.get_text()[:-1].upper()
-    lbl.set_color(GROUP_COLORS.get(BAIT_GROUP_RNA.get(bait,''), '#444444'))
+    lbl.set_color('black')  # black bait labels, as in the assembled figure
     lbl.set_fontweight('bold')
 
 # WCL reference line (~1200 nt median)
 ax_a.axvline(1200, color='#888888', linestyle='--', linewidth=1.0,
              alpha=0.7, label='WCL median (~1200 nt)')
 ax_a.legend(fontsize=7, loc='upper right')
-ax_a.text(-0.1, 1.03, 'A', transform=ax_a.transAxes, fontsize=16, fontweight='bold')
+ax_a.text(-0.1, 1.03, 'B', transform=ax_a.transAxes, fontsize=16, fontweight='bold')
 
-# ── Panel B: Bait-bait Pearson correlation (RNA-seq only) ─────────────────
-ax_b = fig.add_subplot(gs[0, 1])
+# ── Panel A (variable ax_b): Bait-bait Pearson correlation (RNA-seq only) ─
+ax_b = fig.add_subplot(gs[0, 0])
 
 corr_rna = df_rna_filt.corr(method='pearson').loc[rna_baits, rna_baits]
 corr_vals = corr_rna.values.copy()
 np.fill_diagonal(corr_vals, np.nan)
 
-im_b = ax_b.imshow(corr_vals, cmap=CMAP_CORR, vmin=-0.2, vmax=1.0, aspect='equal')
+im_b = ax_b.imshow(corr_vals, cmap=CMAP_CORR, vmin=-0.2, vmax=1.0, aspect='equal', rasterized=True)
 ax_b.set_xticks(range(len(rna_baits)))
 ax_b.set_yticks(range(len(rna_baits)))
 ax_b.set_xticklabels(fmt_baits(rna_baits), fontsize=10.5, rotation=60, ha='right', color='black')
@@ -176,67 +179,16 @@ for i, b in enumerate(rna_baits):
         color=c, transform=ax_b_right.transAxes, clip_on=False))
 ax_b_right.axis('off')
 
-plt.colorbar(im_b, ax=ax_b, shrink=0.6, pad=0.1, label='Pearson r')
+cax_b = ax_b.inset_axes([1.08, 0.25, 0.04, 0.50])
+plt.colorbar(im_b, cax=cax_b, label='Pearson r')
 ax_b.set_title('Bait-bait Pearson Correlation\n(AP-RNA-seq enrichment profiles)',
                fontsize=9, fontweight='bold')
-ax_b.text(-0.14, 1.03, 'B', transform=ax_b.transAxes, fontsize=16, fontweight='bold')
-
-# ── Panel C: ncRNA class proportions per bait ─────────────────────────────
-ax_c = fig.add_subplot(gs[1, 0])
-
-x = np.arange(len(rna_baits))
-NC_COLORS = {
-    'Coding': '#C8B89A',
-    'SUT':    '#FFCA7D',
-    'CUT':    '#F5E6C8',
-    'XUT':    '#F59896',
-    'lncRNA': '#A3C4D6',
-}
-bottom = np.zeros(len(rna_baits))
-for cls, color in NC_COLORS.items():
-    if cls in nc_frac.columns:
-        vals = nc_frac[cls].values
-        ax_c.bar(x, vals, bottom=bottom, color=color, label=cls,
-                 edgecolor='grey', linewidth=0.3, width=1.0)
-        bottom += vals
-
-bar_left_c  = x[0] - 0.5
-bar_right_c = x[-1] + 0.5
-ax_c.set_xticks(x)
-ax_c.set_xticklabels(fmt_baits(rna_baits), fontsize=9, rotation=60, ha='right', color='black')
-ax_c.set_ylabel('Fraction of co-purified transcripts', fontsize=8)
-ax_c.set_ylim(0, 1.05)
-ax_c.set_xlim(bar_left_c, bar_right_c)
-ax_c.set_title('Transcript Class Composition per Bait\n(coding mRNA vs ncRNA classes)',
-               fontsize=9, fontweight='bold')
-ax_c.spines['top'].set_visible(False); ax_c.spines['right'].set_visible(False)
-
-# Pathway stage bar on top — aligned with bar positions
-ax_c_top = ax_c.inset_axes([0, 1.01, 1, 0.025])
-ax_c_top.set_xlim(bar_left_c, bar_right_c); ax_c_top.set_ylim(0, 1); ax_c_top.axis('off')
-for i, b in enumerate(rna_baits):
-    c = GROUP_COLORS.get(BAIT_GROUP_RNA.get(b,''), '#CCCCCC')
-    ax_c_top.add_patch(mpatches.Rectangle((x[i]-0.5, 0), 1, 1, color=c, clip_on=False))
-
-# Functional group legend on right side, vertical
-grp_present_c = [g for g in GROUP_COLORS if any(BAIT_GROUP_RNA.get(b)==g for b in rna_baits)]
-grp_handles_c = [mpatches.Patch(color=GROUP_COLORS[g], label=g) for g in grp_present_c]
-grp_handles_c.append(mpatches.Patch(color='#CCCCCC', label='Other / unassigned'))
-leg_grp_c = ax_c.legend(handles=grp_handles_c, fontsize=7, loc='upper left',
-                         bbox_to_anchor=(1.01, 1.0), framealpha=0.9,
-                         title='Functional group', title_fontsize=7.5, handlelength=1.2)
-ax_c.add_artist(leg_grp_c)
-
-# RNA type legend on right side, below functional group
-nc_handles_c = [mpatches.Patch(color=c, label=k) for k, c in NC_COLORS.items()]
-ax_c.legend(handles=nc_handles_c, fontsize=7, loc='lower left',
-            bbox_to_anchor=(1.01, 0.0), framealpha=0.9,
-            title='RNA type', title_fontsize=7.5, handlelength=1.2)
-
-ax_c.text(-0.1, 1.03, 'C', transform=ax_c.transAxes, fontsize=16, fontweight='bold')
+ax_b.text(-0.14, 1.03, 'A', transform=ax_b.transAxes, fontsize=16, fontweight='bold')
 
 # ── Panel D: Dwell score per bait (violin) ────────────────────────────────
-ax_d = fig.add_subplot(gs[1, 1])
+gs_d = gridspec.GridSpecFromSubplotSpec(2, 1, subplot_spec=gs[1, :],
+                                          height_ratios=[4, 1], hspace=0)
+ax_d = fig.add_subplot(gs_d[0])
 
 # Per-bait enriched gene dwell scores
 dwell_per_bait = []
@@ -264,12 +216,6 @@ ax_d.set_title('Nuclear Processing Dwell Score per Bait\n(enriched genes, FPKM >
                fontsize=9, fontweight='bold')
 ax_d.spines['top'].set_visible(False); ax_d.spines['right'].set_visible(False)
 
-# Pathway stage bar on top — aligned with violin positions
-ax_d_top = ax_d.inset_axes([0, 1.01, 1, 0.025])
-ax_d_top.set_xlim(-0.5, len(rna_baits) - 0.5); ax_d_top.set_ylim(0, 1); ax_d_top.axis('off')
-for i, b in enumerate(rna_baits):
-    c = GROUP_COLORS.get(BAIT_GROUP_RNA.get(b,''), '#CCCCCC')
-    ax_d_top.add_patch(mpatches.Rectangle((i-0.5, 0), 1, 1, color=c, clip_on=False))
 ax_d.text(-0.1, 1.03, 'D', transform=ax_d.transAxes, fontsize=16, fontweight='bold')
 
 # Functional group legend — placed outside Panel D to the right
@@ -278,7 +224,7 @@ legend_patches = [mpatches.Patch(color=c, label=g) for g, c in GROUP_COLORS.item
 ax_d.legend(handles=legend_patches, loc='center left', bbox_to_anchor=(1.02, 0.5),
             fontsize=7, frameon=True, title='Functional group', title_fontsize=7.5)
 
-fig.suptitle('Figure S2  |  AP-RNA-seq Extended Analysis: Transcript Length, Class, and Dwell',
+fig.suptitle('Supplemental Figure 5, panels A, B, D  |  AP-RNA-seq extended analyses: correlation, transcript length, dwell',
              fontsize=12, fontweight='bold', y=0.975)
 
 out = OUTDIR + "figureS2_composite.pdf"

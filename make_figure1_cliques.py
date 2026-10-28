@@ -1,9 +1,8 @@
 """
-Figure 1 panels G and H (2026-07-02).
+Figure 1 panel G (2026-07-02; the former node-degree panel H is not part of Figure 1 and was removed 2026-10-28).
 G: clique membership matrix — uses Alex's Excel clique data (Sheet1, 129 cliques ≥3 baits).
    Gene aliases normalized: STO1→CBP80, CBC2→CBP20, YHR127W→YHS7; MTR2 excluded.
    All 34 baits shown on x-axis (pathway order); baits absent from any clique show blank columns.
-H: node degree bar chart — computed from AP-MS matrix (unique nuclear preys per bait, all 34 incl. YHS7).
 figsize=(11, 2.05) — narrow height for clean embedding in assembled Figure 1.
 """
 import numpy as np
@@ -19,15 +18,16 @@ import warnings
 warnings.filterwarnings('ignore')
 
 import sys
-sys.path.insert(0, "/sessions/lucid-modest-goldberg/mnt/outputs/")
+import os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from figure_style import (apply_style, GROUP_COLORS, BAIT_GROUP_APMS, fmt_bait, fmt_baits,
                            CMAP_APMS, PATHWAY_ORDER_APMS as _PO)
 BAIT_GROUP = BAIT_GROUP_APMS
 apply_style()
 
-OUTDIR  = "/sessions/lucid-modest-goldberg/mnt/MS results/"
-DATADIR = "/sessions/lucid-modest-goldberg/mnt/outputs/"
-ALEXDIR = "/sessions/lucid-modest-goldberg/mnt/Alex/MS shortest pathway analysis/"
+OUTDIR  = "output/"
+DATADIR = "data/"
+ALEXDIR = "data/Alex/MS shortest pathway analysis/"
 
 PATHWAY_ORDER_APMS = [
     'CBP20','CBP80',
@@ -106,12 +106,10 @@ for ci, clique in enumerate(all_cliques_sorted):
 print(f"Membership matrix: {membership.shape}")
 
 # ── Build panels G + H ────────────────────────────────────────────────────
-fig, axes = plt.subplots(1, 2, figsize=(11, 2.05),
-                          gridspec_kw={'width_ratios': [2, 1.2]})
+fig, ax_g = plt.subplots(1, 1, figsize=(11, 2.05))
 fig.patch.set_facecolor('white')
 
 # ── Panel G: clique membership matrix ─────────────────────────────────────
-ax_g = axes[0]
 blue_bin = LinearSegmentedColormap.from_list('bin_blue', ['#FFFFFF','#1A237E'], N=2)
 ax_g.imshow(membership, aspect='auto', cmap=blue_bin, vmin=0, vmax=1,
             interpolation='nearest')
@@ -127,45 +125,8 @@ ax_g.set_yticks(range(0, n_cliques, tick_step))
 ax_g.set_yticklabels(range(0, n_cliques, tick_step), fontsize=4)
 ax_g.text(-0.08, 1.03, 'G', transform=ax_g.transAxes, fontsize=16, fontweight='bold')
 
-# ── Panel H: node degree bar chart ────────────────────────────────────────
-ax_h = axes[1]
-bar_proteins = baits  # all 34 baits in pathway order
-bar_degrees  = [int(node_degree.get(p, 0)) for p in bar_proteins]
-bar_colors   = [GROUP_COLORS.get(BAIT_GROUP.get(p, ''), '#CCCCCC') for p in bar_proteins]
-
-x = np.arange(len(bar_proteins))
-ax_h.bar(x, bar_degrees, color=bar_colors, edgecolor='white', linewidth=0.3, width=0.75)
-ax_h.set_xticks(x)
-ax_h.set_xticklabels(fmt_baits(bar_proteins), fontsize=4, rotation=90, ha='right')
-ax_h.set_ylabel('Node degree\n(unique prey proteins)', fontsize=4)
-ax_h.set_title('Interaction Hub Proteins (node degree per bait)', fontsize=7.5, fontweight='bold', pad=20)
-ax_h.set_ylim(0, max(bar_degrees) * 1.18)
-ax_h.tick_params(axis='y', labelsize=3)
-ax_h.spines['top'].set_visible(False)
-ax_h.spines['right'].set_visible(False)
-ax_h.axhline(0, color='black', linewidth=0.5)
-
-# Annotate top 5 bars
-top5 = sorted(zip(bar_degrees, bar_proteins), reverse=True)[:5]
-for deg, prot in top5:
-    xi = bar_proteins.index(prot)
-    ax_h.text(xi, deg + 0.5, str(int(deg)), ha='center', va='bottom',
-              fontsize=5, fontweight='bold')
-
-ax_h.text(-0.08, 1.03, 'H', transform=ax_h.transAxes, fontsize=16, fontweight='bold')
-
-# Legend right of panel H
-legend_patches = [mpatches.Patch(color=c, label=g) for g, c in GROUP_COLORS.items()
-                  if any(BAIT_GROUP.get(p) == g for p in baits)]
-ax_h.legend(handles=legend_patches, loc='upper left',
-            bbox_to_anchor=(1.03, 1.0), ncol=1,
-            fontsize=5.0, frameon=True,
-            title='Functional group', title_fontsize=5.5,
-            labelspacing=0.25,
-            markerscale=0.7, handlelength=0.8, handletextpad=0.3)
-
 plt.subplots_adjust(left=0.06, right=0.86, top=0.78, bottom=0.22)
-out_gh = OUTDIR + "figure1_panels_GH.pdf"
+out_gh = OUTDIR + "figure1_panel_G.pdf"
 fig.savefig(out_gh, bbox_inches='tight', facecolor='white')
 plt.close()
 print(f"Saved: {out_gh}")

@@ -1,0 +1,307 @@
+bait_A	bait_B	func_A	func_B	ms_r	rna_r	same_func	quad
+CBP80	NAB2	CBC	poly(A)/hnRNP	0.5041862089996151	0.1853867624723459	False	"MS high, RNA low
+(stable complex, divergent RNA)"
+CBP80	HRP1	CBC	poly(A)/hnRNP	0.1475109819075603	0.2117827582144769	False	"Both low
+(unrelated)"
+CBP80	NPL3	CBC	poly(A)/hnRNP	0.6377456446665599	0.3890374730965561	False	"MS high, RNA low
+(stable complex, divergent RNA)"
+CBP80	GBP2	CBC	poly(A)/hnRNP	0.5150195425884753	-0.1694142970605494	False	"MS high, RNA low
+(stable complex, divergent RNA)"
+CBP80	PAB1	CBC	poly(A)/hnRNP	0.132795393297784	0.1826002527331572	False	"Both low
+(unrelated)"
+CBP80	SNU71	CBC	Splicing	0.5409166440627599	0.5485362834470398	False	"Both high
+(true functional complex)"
+CBP80	SUB2	CBC	THO/TREX	0.0597558651163966	0.1921821743340728	False	"Both low
+(unrelated)"
+CBP80	THP2	CBC	THO/TREX	0.0989797228130857	0.1634196437464359	False	"Both low
+(unrelated)"
+CBP80	CLP1	CBC	3' proc.	0.06286177889564	-0.311261271812719	False	"Both low
+(unrelated)"
+CBP80	SYC1	CBC	3' proc.	0.1199401260509658	-0.2764972446836261	False	"Both low
+(unrelated)"
+CBP80	REF2	CBC	3' proc.	0.3048127098967337	-0.303112535445905	False	"Both low
+(unrelated)"
+CBP80	SAC3	CBC	TREX-2/NPC	0.016577918042303	-0.3106906791701919	False	"Both low
+(unrelated)"
+CBP80	GFD1	CBC	TREX-2/NPC	0.802344976957538	0.5146272073143439	False	"Both high
+(true functional complex)"
+CBP80	YRA1	CBC	Export	-0.0193871049534676	-0.1772568692105646	False	"Both low
+(unrelated)"
+CBP80	MEX67	CBC	Export	0.1947712920514725	-0.0924295490660837	False	"Both low
+(unrelated)"
+CBP80	DBP5	CBC	Export	0.0848626373639139	-0.0932073155935027	False	"Both low
+(unrelated)"
+CBP80	RRP6	CBC	Surveillance	0.0055314918322628	-0.2190352279714068	False	"Both low
+(unrelated)"
+NAB2	HRP1	poly(A)/hnRNP	poly(A)/hnRNP	0.1039169940796774	0.377947251813438	True	"Both low
+(unrelated)"
+NAB2	NPL3	poly(A)/hnRNP	poly(A)/hnRNP	0.4388160323380831	0.580672700074052	True	"Both high
+(true functional complex)"
+NAB2	GBP2	poly(A)/hnRNP	poly(A)/hnRNP	0.456236336091767	0.2009747154500588	True	"MS high, RNA low
+(stable complex, divergent RNA)"
+NAB2	PAB1	poly(A)/hnRNP	poly(A)/hnRNP	0.3754110347822618	0.5609490462791215	True	"Both high
+(true functional complex)"
+NAB2	SNU71	poly(A)/hnRNP	Splicing	0.2074328615953493	0.3104488352659207	False	"Both low
+(unrelated)"
+NAB2	SUB2	poly(A)/hnRNP	THO/TREX	0.1489973097775191	0.2552038596331404	False	"Both low
+(unrelated)"
+NAB2	THP2	poly(A)/hnRNP	THO/TREX	0.1141915743634243	0.2029746221693358	False	"Both low
+(unrelated)"
+NAB2	CLP1	poly(A)/hnRNP	3' proc.	0.0749332084238865	0.123185165409356	False	"Both low
+(unrelated)"
+NAB2	SYC1	poly(A)/hnRNP	3' proc.	0.1083738034166157	0.2209750924194004	False	"Both low
+(unrelated)"
+NAB2	REF2	poly(A)/hnRNP	3' proc.	0.1162573077474038	0.1719211367726218	False	"Both low
+(unrelated)"
+NAB2	SAC3	poly(A)/hnRNP	TREX-2/NPC	0.0385241202601464	0.1195289237042574	False	"Both low
+(unrelated)"
+NAB2	GFD1	poly(A)/hnRNP	TREX-2/NPC	0.6327700732204147	0.2447350680773224	False	"MS high, RNA low
+(stable complex, divergent RNA)"
+NAB2	YRA1	poly(A)/hnRNP	Export	0.0598007290455718	0.3039102165329788	False	"Both low
+(unrelated)"
+NAB2	MEX67	poly(A)/hnRNP	Export	0.2946709378441669	0.2984719737400353	False	"Both low
+(unrelated)"
+NAB2	DBP5	poly(A)/hnRNP	Export	0.1354594664421028	0.2162462535968559	False	"Both low
+(unrelated)"
+NAB2	RRP6	poly(A)/hnRNP	Surveillance	0.0309508652211552	0.2206608404699946	False	"Both low
+(unrelated)"
+HRP1	NPL3	poly(A)/hnRNP	poly(A)/hnRNP	0.1278693529065538	0.4684326299835909	True	"Both low
+(unrelated)"
+HRP1	GBP2	poly(A)/hnRNP	poly(A)/hnRNP	0.1164565143935974	0.1255151523872078	True	"Both low
+(unrelated)"
+HRP1	PAB1	poly(A)/hnRNP	poly(A)/hnRNP	-0.0030139973023999	0.3578696255269841	True	"Both low
+(unrelated)"
+HRP1	SNU71	poly(A)/hnRNP	Splicing	0.0703144061526639	0.3277718703377842	False	"Both low
+(unrelated)"
+HRP1	SUB2	poly(A)/hnRNP	THO/TREX	-0.0046846913017714	0.2600314832576096	False	"Both low
+(unrelated)"
+HRP1	THP2	poly(A)/hnRNP	THO/TREX	0.0142796108977152	0.061104147218559	False	"Both low
+(unrelated)"
+HRP1	CLP1	poly(A)/hnRNP	3' proc.	0.0955684644112256	-0.0290740207514442	False	"Both low
+(unrelated)"
+HRP1	SYC1	poly(A)/hnRNP	3' proc.	0.0636389209650897	0.0942709462013231	False	"Both low
+(unrelated)"
+HRP1	REF2	poly(A)/hnRNP	3' proc.	0.1228800913868658	0.0490168075125413	False	"Both low
+(unrelated)"
+HRP1	SAC3	poly(A)/hnRNP	TREX-2/NPC	-0.004227224416777	-0.0527661211761954	False	"Both low
+(unrelated)"
+HRP1	GFD1	poly(A)/hnRNP	TREX-2/NPC	0.1870557183410919	0.2588211116358029	False	"Both low
+(unrelated)"
+HRP1	YRA1	poly(A)/hnRNP	Export	-0.0095277190188038	0.1710215666071988	False	"Both low
+(unrelated)"
+HRP1	MEX67	poly(A)/hnRNP	Export	0.0264128212128783	0.1111895433617282	False	"Both low
+(unrelated)"
+HRP1	DBP5	poly(A)/hnRNP	Export	0.0074674294538993	0.0399886745116577	False	"Both low
+(unrelated)"
+HRP1	RRP6	poly(A)/hnRNP	Surveillance	-0.0083398300734506	0.0976553612706216	False	"Both low
+(unrelated)"
+NPL3	GBP2	poly(A)/hnRNP	poly(A)/hnRNP	0.5035075796518869	0.1706529980958979	True	"MS high, RNA low
+(stable complex, divergent RNA)"
+NPL3	PAB1	poly(A)/hnRNP	poly(A)/hnRNP	0.1091038884550414	0.5136274865942311	True	"RNA high, MS low
+(shared RNA, no stable complex)"
+NPL3	SNU71	poly(A)/hnRNP	Splicing	0.2684628727778831	0.4935300720953941	False	"Both low
+(unrelated)"
+NPL3	SUB2	poly(A)/hnRNP	THO/TREX	0.0298734120630119	0.2229968509290408	False	"Both low
+(unrelated)"
+NPL3	THP2	poly(A)/hnRNP	THO/TREX	0.0737789251887783	0.1080008906187876	False	"Both low
+(unrelated)"
+NPL3	CLP1	poly(A)/hnRNP	3' proc.	0.0373356454026657	-0.007014674415628	False	"Both low
+(unrelated)"
+NPL3	SYC1	poly(A)/hnRNP	3' proc.	0.1121483515932107	0.1357776870893388	False	"Both low
+(unrelated)"
+NPL3	REF2	poly(A)/hnRNP	3' proc.	0.1048307683830244	0.0667505644198615	False	"Both low
+(unrelated)"
+NPL3	SAC3	poly(A)/hnRNP	TREX-2/NPC	0.000733959523267	0.0006609908432407	False	"Both low
+(unrelated)"
+NPL3	GFD1	poly(A)/hnRNP	TREX-2/NPC	0.7181994956245913	0.1366062354338674	False	"MS high, RNA low
+(stable complex, divergent RNA)"
+NPL3	YRA1	poly(A)/hnRNP	Export	-0.0175923317472967	0.2011817168074071	False	"Both low
+(unrelated)"
+NPL3	MEX67	poly(A)/hnRNP	Export	0.1591851713110866	0.1168950153898277	False	"Both low
+(unrelated)"
+NPL3	DBP5	poly(A)/hnRNP	Export	0.0551081020375877	0.1118393852317353	False	"Both low
+(unrelated)"
+NPL3	RRP6	poly(A)/hnRNP	Surveillance	-0.0100497518699483	0.2115522333105148	False	"Both low
+(unrelated)"
+GBP2	PAB1	poly(A)/hnRNP	poly(A)/hnRNP	0.1448205615256693	0.0037446853074426	True	"Both low
+(unrelated)"
+GBP2	SNU71	poly(A)/hnRNP	Splicing	0.2370769186093702	0.1093928954144453	False	"Both low
+(unrelated)"
+GBP2	SUB2	poly(A)/hnRNP	THO/TREX	0.0529308653521095	0.4452178922942324	False	"Both low
+(unrelated)"
+GBP2	THP2	poly(A)/hnRNP	THO/TREX	0.0775838987249495	0.4708881469541811	False	"Both low
+(unrelated)"
+GBP2	CLP1	poly(A)/hnRNP	3' proc.	0.0451049161165126	0.7416873096495408	False	"RNA high, MS low
+(shared RNA, no stable complex)"
+GBP2	SYC1	poly(A)/hnRNP	3' proc.	0.1125943531257022	0.8699920608876328	False	"RNA high, MS low
+(shared RNA, no stable complex)"
+GBP2	REF2	poly(A)/hnRNP	3' proc.	0.1012407697874068	0.8178236350181245	False	"RNA high, MS low
+(shared RNA, no stable complex)"
+GBP2	SAC3	poly(A)/hnRNP	TREX-2/NPC	0.013768874741074	0.6724454556502854	False	"RNA high, MS low
+(shared RNA, no stable complex)"
+GBP2	GFD1	poly(A)/hnRNP	TREX-2/NPC	0.6841766353466423	-0.0442525742373787	False	"MS high, RNA low
+(stable complex, divergent RNA)"
+GBP2	YRA1	poly(A)/hnRNP	Export	0.2617336364289683	0.832178415060408	False	"RNA high, MS low
+(shared RNA, no stable complex)"
+GBP2	MEX67	poly(A)/hnRNP	Export	0.168333651745291	0.8389944974111172	False	"RNA high, MS low
+(shared RNA, no stable complex)"
+GBP2	DBP5	poly(A)/hnRNP	Export	0.065379613284253	0.7913158294040419	False	"RNA high, MS low
+(shared RNA, no stable complex)"
+GBP2	RRP6	poly(A)/hnRNP	Surveillance	0.0028479084841711	0.895990438815649	False	"RNA high, MS low
+(shared RNA, no stable complex)"
+PAB1	SNU71	poly(A)/hnRNP	Splicing	0.0064367945358445	0.490642463729265	False	"Both low
+(unrelated)"
+PAB1	SUB2	poly(A)/hnRNP	THO/TREX	0.2203800994594028	0.1133406944167021	False	"Both low
+(unrelated)"
+PAB1	THP2	poly(A)/hnRNP	THO/TREX	0.0913364651983004	-0.0511218068720398	False	"Both low
+(unrelated)"
+PAB1	CLP1	poly(A)/hnRNP	3' proc.	0.0478401672453062	0.120812060351489	False	"Both low
+(unrelated)"
+PAB1	SYC1	poly(A)/hnRNP	3' proc.	0.0402548486008515	0.2514468853231457	False	"Both low
+(unrelated)"
+PAB1	REF2	poly(A)/hnRNP	3' proc.	0.0303551218090613	0.1543746057680992	False	"Both low
+(unrelated)"
+PAB1	SAC3	poly(A)/hnRNP	TREX-2/NPC	0.0397952935574888	0.228215273781763	False	"Both low
+(unrelated)"
+PAB1	GFD1	poly(A)/hnRNP	TREX-2/NPC	0.1790432231793168	0.2923189314070086	False	"Both low
+(unrelated)"
+PAB1	YRA1	poly(A)/hnRNP	Export	-0.0102953501466797	0.2678809531724042	False	"Both low
+(unrelated)"
+PAB1	MEX67	poly(A)/hnRNP	Export	0.3407861908295652	0.1057753848978998	False	"Both low
+(unrelated)"
+PAB1	DBP5	poly(A)/hnRNP	Export	0.0891102392412734	-0.0220558796390285	False	"Both low
+(unrelated)"
+PAB1	RRP6	poly(A)/hnRNP	Surveillance	0.0353635832077825	0.2019207844331511	False	"Both low
+(unrelated)"
+SNU71	SUB2	Splicing	THO/TREX	-0.006353298085957	0.3305190178989857	False	"Both low
+(unrelated)"
+SNU71	THP2	Splicing	THO/TREX	0.0340709728809805	0.1285081042464352	False	"Both low
+(unrelated)"
+SNU71	CLP1	Splicing	3' proc.	0.0171771988315027	-0.0639191035356227	False	"Both low
+(unrelated)"
+SNU71	SYC1	Splicing	3' proc.	0.0489031342241576	0.1366487487227993	False	"Both low
+(unrelated)"
+SNU71	REF2	Splicing	3' proc.	0.3225428034654187	0.0203388246039342	False	"Both low
+(unrelated)"
+SNU71	SAC3	Splicing	TREX-2/NPC	-0.0037634585688308	-0.0221384192007925	False	"Both low
+(unrelated)"
+SNU71	GFD1	Splicing	TREX-2/NPC	0.3824100289783501	0.3119536542465702	False	"MS high, RNA low
+(stable complex, divergent RNA)"
+SNU71	YRA1	Splicing	Export	-0.0147423878693655	0.2266343262813337	False	"Both low
+(unrelated)"
+SNU71	MEX67	Splicing	Export	0.052802022084089	0.1441762076324161	False	"Both low
+(unrelated)"
+SNU71	DBP5	Splicing	Export	0.0216080457633582	0.0122623071994464	False	"Both low
+(unrelated)"
+SNU71	RRP6	Splicing	Surveillance	-0.0107607032479751	0.1655590741364278	False	"Both low
+(unrelated)"
+SUB2	THP2	THO/TREX	THO/TREX	0.5268951243903642	0.7033995804653129	True	"Both high
+(true functional complex)"
+SUB2	CLP1	THO/TREX	3' proc.	-0.0015202530837722	0.28248060712032	False	"Both low
+(unrelated)"
+SUB2	SYC1	THO/TREX	3' proc.	0.0031632768242343	0.3121109610095234	False	"Both low
+(unrelated)"
+SUB2	REF2	THO/TREX	3' proc.	-0.0124108453789786	0.3020637862324315	False	"Both low
+(unrelated)"
+SUB2	SAC3	THO/TREX	TREX-2/NPC	0.6752531563153292	0.216882827439334	False	"MS high, RNA low
+(stable complex, divergent RNA)"
+SUB2	GFD1	THO/TREX	TREX-2/NPC	0.0942648523140008	0.2771676165616017	False	"Both low
+(unrelated)"
+SUB2	YRA1	THO/TREX	Export	0.0887421264354994	0.5332774924788336	False	"RNA high, MS low
+(shared RNA, no stable complex)"
+SUB2	MEX67	THO/TREX	Export	0.5831034795636432	0.4159946847911685	False	"MS high, RNA low
+(stable complex, divergent RNA)"
+SUB2	DBP5	THO/TREX	Export	0.5772417426658749	0.3858750714856576	False	"MS high, RNA low
+(stable complex, divergent RNA)"
+SUB2	RRP6	THO/TREX	Surveillance	-0.008463188039262	0.3372072881033786	False	"Both low
+(unrelated)"
+THP2	CLP1	THO/TREX	3' proc.	0.0018380843003616	0.3964801390084053	False	"Both low
+(unrelated)"
+THP2	SYC1	THO/TREX	3' proc.	0.0118588640909093	0.3538910258967494	False	"Both low
+(unrelated)"
+THP2	REF2	THO/TREX	3' proc.	0.0045329241218716	0.3966933510829519	False	"Both low
+(unrelated)"
+THP2	SAC3	THO/TREX	TREX-2/NPC	-0.0033131421004045	0.3288005123308685	False	"Both low
+(unrelated)"
+THP2	GFD1	THO/TREX	TREX-2/NPC	0.1332615293866027	0.3045760206683916	False	"Both low
+(unrelated)"
+THP2	YRA1	THO/TREX	Export	-0.0128087472382719	0.512590530995476	False	"RNA high, MS low
+(shared RNA, no stable complex)"
+THP2	MEX67	THO/TREX	Export	0.0621760709600632	0.4674348144724674	False	"Both low
+(unrelated)"
+THP2	DBP5	THO/TREX	Export	0.0078365815266998	0.5470710074082816	False	"RNA high, MS low
+(shared RNA, no stable complex)"
+THP2	RRP6	THO/TREX	Surveillance	-0.0080091381633696	0.3724774006690472	False	"Both low
+(unrelated)"
+CLP1	SYC1	3' proc.	3' proc.	0.1639660241151045	0.8613513048590113	True	"RNA high, MS low
+(shared RNA, no stable complex)"
+CLP1	REF2	3' proc.	3' proc.	0.4653306598240424	0.9456850522457207	True	"Both high
+(true functional complex)"
+CLP1	SAC3	3' proc.	TREX-2/NPC	-0.0149892672795154	0.9386501461624064	False	"RNA high, MS low
+(shared RNA, no stable complex)"
+CLP1	GFD1	3' proc.	TREX-2/NPC	0.0984541311161947	0.0554511145780525	False	"Both low
+(unrelated)"
+CLP1	YRA1	3' proc.	Export	-0.0178996875618196	0.8306426847931025	False	"RNA high, MS low
+(shared RNA, no stable complex)"
+CLP1	MEX67	3' proc.	Export	0.0308910009122736	0.7021959799327075	False	"RNA high, MS low
+(shared RNA, no stable complex)"
+CLP1	DBP5	3' proc.	Export	-0.0125713054572726	0.6816162781218742	False	"RNA high, MS low
+(shared RNA, no stable complex)"
+CLP1	RRP6	3' proc.	Surveillance	-0.0215321152449949	0.8196572788834179	False	"RNA high, MS low
+(shared RNA, no stable complex)"
+SYC1	REF2	3' proc.	3' proc.	0.3338966897258721	0.9203455606285836	True	"RNA high, MS low
+(shared RNA, no stable complex)"
+SYC1	SAC3	3' proc.	TREX-2/NPC	-0.0085347514420658	0.8591797901762958	False	"RNA high, MS low
+(shared RNA, no stable complex)"
+SYC1	GFD1	3' proc.	TREX-2/NPC	0.167288140819581	0.0141993400154394	False	"Both low
+(unrelated)"
+SYC1	YRA1	3' proc.	Export	-0.0138044321565353	0.9013782223238036	False	"RNA high, MS low
+(shared RNA, no stable complex)"
+SYC1	MEX67	3' proc.	Export	0.0404196518529179	0.8066219572394863	False	"RNA high, MS low
+(shared RNA, no stable complex)"
+SYC1	DBP5	3' proc.	Export	0.0009816444453939	0.7185072831975327	False	"RNA high, MS low
+(shared RNA, no stable complex)"
+SYC1	RRP6	3' proc.	Surveillance	-0.0130440891379454	0.9585959894619444	False	"RNA high, MS low
+(shared RNA, no stable complex)"
+REF2	SAC3	3' proc.	TREX-2/NPC	-0.0196244992818869	0.8819262554009024	False	"RNA high, MS low
+(shared RNA, no stable complex)"
+REF2	GFD1	3' proc.	TREX-2/NPC	0.1846999701627093	-0.0046751096468558	False	"Both low
+(unrelated)"
+REF2	YRA1	3' proc.	Export	-0.0226374984966174	0.8957177776789248	False	"RNA high, MS low
+(shared RNA, no stable complex)"
+REF2	MEX67	3' proc.	Export	0.0331732894556633	0.7541519963233823	False	"RNA high, MS low
+(shared RNA, no stable complex)"
+REF2	DBP5	3' proc.	Export	-0.0151374592101369	0.6837864977439616	False	"RNA high, MS low
+(shared RNA, no stable complex)"
+REF2	RRP6	3' proc.	Surveillance	-0.0297903169234566	0.8892373032490027	False	"RNA high, MS low
+(shared RNA, no stable complex)"
+SAC3	GFD1	TREX-2/NPC	TREX-2/NPC	0.0388852866759514	0.0898608921023109	True	"Both low
+(unrelated)"
+SAC3	YRA1	TREX-2/NPC	Export	-0.0152132441198832	0.7938562947312751	False	"RNA high, MS low
+(shared RNA, no stable complex)"
+SAC3	MEX67	TREX-2/NPC	Export	0.7329122534975477	0.6684291893729656	False	"Both high
+(true functional complex)"
+SAC3	DBP5	TREX-2/NPC	Export	0.875615640139327	0.6503459485037187	False	"Both high
+(true functional complex)"
+SAC3	RRP6	TREX-2/NPC	Surveillance	-0.0180547912839542	0.8090222556559683	False	"RNA high, MS low
+(shared RNA, no stable complex)"
+GFD1	YRA1	TREX-2/NPC	Export	0.0392839013758903	0.0768239741348932	False	"Both low
+(unrelated)"
+GFD1	MEX67	TREX-2/NPC	Export	0.2614201333651307	0.1623286485483183	False	"Both low
+(unrelated)"
+GFD1	DBP5	TREX-2/NPC	Export	0.1302169568355025	0.2052590556013484	False	"Both low
+(unrelated)"
+GFD1	RRP6	TREX-2/NPC	Surveillance	0.0275640967432255	-0.0136898298834673	False	"Both low
+(unrelated)"
+YRA1	MEX67	Export	Export	-0.0139458445681608	0.7957694484816143	True	"RNA high, MS low
+(shared RNA, no stable complex)"
+YRA1	DBP5	Export	Export	-0.0223970758835765	0.6559284957809021	True	"RNA high, MS low
+(shared RNA, no stable complex)"
+YRA1	RRP6	Export	Surveillance	-0.0186833871961835	0.8819733285348638	False	"RNA high, MS low
+(shared RNA, no stable complex)"
+MEX67	DBP5	Export	Export	0.8366617334776418	0.8192843567739065	True	"Both high
+(true functional complex)"
+MEX67	RRP6	Export	Surveillance	0.0120675874011818	0.8045801138598908	False	"RNA high, MS low
+(shared RNA, no stable complex)"
+DBP5	RRP6	Export	Surveillance	-0.0221640245042472	0.728138982826481	False	"RNA high, MS low
+(shared RNA, no stable complex)"

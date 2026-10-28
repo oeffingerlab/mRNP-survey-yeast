@@ -52,14 +52,8 @@ GROUP_COLORS = {
 }
 
 CLUSTER_COLORS = {
-    1: '#EF8886',   # soft red
-    2: '#FDBA66',   # soft orange
-    3: '#FEE886',   # soft yellow
-    4: '#8EC691',   # soft green
-    5: '#66CDDA',   # soft cyan
-    6: '#78B8EF',   # soft blue
-    7: '#BB7CCC',   # soft purple
-    8: '#A7948D',   # soft brown
+    1: '#A7948D',   2: '#78B8EF',   3: '#8EC691',   4: '#66CDDA',
+    5: '#FEE886',   6: '#FDBA66',   7: '#BB7CCC',   8: '#EF8886',
 }
 
 BAIT_GROUP_APMS = {
@@ -127,12 +121,8 @@ PATHWAY_ORDER_RNA = [
     'PAB1','NAB2','NPL3','GBP2','GFD1',
     'RRP6','SUB2','SAC3','MEX67','DBP5',
 ]
-CLUSTER_ORDER = [8, 6, 4, 5, 3, 2, 7, 1]
-CLUSTER_LABELS = {
-    8: "C8\nSplicing/RP", 6: "C6\nCBC/hnRNP", 4: "C4\nTHO/TREX",
-    5: "C5\nhnRNP",       3: "C3\n3'end proc.", 2: "C2\nTREX-2",
-    7: "C7\nGFD1",        1: "C1\nExport",
-}
+CLUSTER_ORDER = [1, 2, 3, 4, 5, 6, 7, 8]
+CLUSTER_LABELS = {1: "C1\nCBC/splicing/Npl3p", 2: "C2\nhnRNP/Poly(A)", 3: "C3\nTHO/TREX", 4: "C4\nHrp1p", 5: "C5\n3'end proc.", 6: "C6\nTREX-2", 7: "C7\nGfd1p/CBC", 8: "C8\nExport"}
 
 # ── Helper: colored bait label bars ──────────────────────────────────────
 def bait_color_bar_h(ax, baits, bait_group_map):

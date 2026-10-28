@@ -1,8 +1,10 @@
 """
 Spotlight figures:
-  X: SAC3/TREX-2 / MLP1/MLP2 subnetwork (AP-MS interaction hub)
-  Y: NAB2/YRA1/PAB1 breadth comparison panel
-  Z: RRP6 ncRNA class spotlight
+  X: Pml39p-centered export scaffold subnetwork  -> Supplemental Figure 3H
+  Y: Nab2p/Yra1p/Pab1p vs stage-specific baits, per-cluster violins  -> Supplemental Figure 3I
+     (one sub-plot per bait, no sub-letters)
+  Z: Rrp6p transcript-class panels -> NOT part of the final figures (kept for reference only;
+     its "ncRNA surveillance signature" framing was not supported by the class-composition data)
 
 Exclusions:
   - MTR2 excluded from all AP-MS analyses
@@ -21,14 +23,15 @@ import openpyxl, warnings, os
 warnings.filterwarnings('ignore')
 
 import sys
-sys.path.insert(0, "/sessions/lucid-modest-goldberg/mnt/outputs/")
+import os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from figure_style import (apply_style, GROUP_COLORS, BAIT_GROUP_APMS, fmt_bait, fmt_baits,
                            CLUSTER_COLORS, CMAP_RNA, PATHWAY_ORDER_RNA,
                            PATHWAY_ORDER_APMS)
 apply_style()
 
-OUTDIR  = "/sessions/lucid-modest-goldberg/mnt/MS results/"
-DATADIR = "/sessions/lucid-modest-goldberg/mnt/outputs/"
+OUTDIR  = "output/"
+DATADIR = "data/"
 
 # ── Load core data ──────────────────────────────────────────────────────────
 df_apms = pd.read_csv(DATADIR + "apms_nuclear_matrix.tsv", sep='\t', index_col=0)
@@ -53,7 +56,7 @@ NC_BAIT_COLS = {
     'DBP5':  [47,48,49], 'PAB1': [50,51,52,53],
 }
 
-nc_dir = "/sessions/lucid-modest-goldberg/mnt/Alex/RNA data April 2014/MOe/please filter and cluster/"
+nc_dir = "data/ncRNA/"
 nc_files = {
     'Coding': nc_dir + "all_codingRNAs_WTPOs_and_Mutants.xlsx",
     'SUT':    nc_dir + "all_SUTs_WTPOs_and_Mutants.xlsx",
@@ -303,14 +306,14 @@ else:
 # Compute per-bait enrichment statistics across clusters
 genes_in_filt = df_rna_filt.index
 
-fig_y = plt.figure(figsize=(14, 18))
+fig_y = plt.figure(figsize=(21, 12))
 fig_y.patch.set_facecolor('white')
-gs_y = gridspec.GridSpec(3, 2, figure=fig_y, hspace=0.52, wspace=0.38,
+gs_y = gridspec.GridSpec(2, 3, figure=fig_y, hspace=0.52, wspace=0.38,
                           left=0.10, right=0.96, top=0.90, bottom=0.08)
 
 for panel_i, bait in enumerate(ALL_PANEL_BAITS):
-    row = panel_i // 2
-    col = panel_i % 2
+    row = panel_i // 3   # 2 rows x 3 columns, as in Supplemental Figure 3I
+    col = panel_i % 3
     ax = fig_y.add_subplot(gs_y[row, col])
 
     if bait not in df_rna.columns:
@@ -366,12 +369,11 @@ for panel_i, bait in enumerate(ALL_PANEL_BAITS):
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
 
-    panel_letter = ['A', 'B', 'C', 'D', 'E', 'F'][panel_i]
     if panel_i < 3:
-        ax.set_title(f'{panel_letter}  {fmt_bait(bait)}\n(constitutive companion)',
+        ax.set_title(f'{fmt_bait(bait)}\n(broadly associated)',
                      fontsize=10, fontweight='bold', color=color, pad=4)
     else:
-        ax.set_title(f'{panel_letter}  {fmt_bait(bait)}\n(stage-specific contrast)',
+        ax.set_title(f'{fmt_bait(bait)}\n(stage-specific)',
                      fontsize=10, fontweight='bold', color='#666666', pad=4)
 
 
@@ -382,8 +384,8 @@ fig_y.legend(handles=c_patches, loc='lower center', ncol=6, fontsize=8,
              frameon=True, bbox_to_anchor=(0.5, 0.01),
              title='Bait | functional group color', title_fontsize=8)
 
-fig_y.suptitle('Spotlight Figure Y  |  NAB2 / YRA1 / PAB1: Near-Universal Transcript Co-enrichment\n'
-               'vs. Stage-specific Factors (THP2, SNU71, RRP6) — Violin per RNA-seq Cluster',
+fig_y.suptitle('Supplemental Figure 3I  |  Transcript co-enrichment per RNA cluster:\n'
+               'broadly associated (Nab2p, Yra1p, Pab1p) and stage-specific (Thp2p, Snu71p, Rrp6p) baits',
                fontsize=11, fontweight='bold', y=0.97)
 
 out_y = OUTDIR + "spotlight_Y_NAB2_YRA1_PAB1_breadth.pdf"
@@ -411,7 +413,7 @@ for cls, color in NC_COLORS.items():
     if cls in nc_frac.columns:
         vals = nc_frac[cls].values
         ax_za.bar(x, vals, bottom=bottom, color=color, label=cls,
-                  edgecolor='grey', linewidth=0.3, width=1.0)
+                  edgecolor='gray', linewidth=0.3, width=1.0)
         bottom += vals
 
 # Highlight RRP6
@@ -446,7 +448,7 @@ for cls, color in NC_COLORS.items():
         vals = [nc_frac.loc[b, cls] if b in nc_frac.index else 0
                 for b in compare_baits]
         ax_zb.bar(x2, vals, bottom=bottom2, color=color, label=cls,
-                  edgecolor='grey', linewidth=0.3, width=1.0)
+                  edgecolor='gray', linewidth=0.3, width=1.0)
         bottom2 += np.array(vals)
 
 ax_zb.set_xticks(x2)

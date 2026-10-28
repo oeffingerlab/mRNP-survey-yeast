@@ -26,13 +26,14 @@ import warnings
 warnings.filterwarnings('ignore')
 
 import sys
-sys.path.insert(0, "/sessions/lucid-modest-goldberg/mnt/outputs/")
+import os
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from figure_style import (apply_style, GROUP_COLORS, BAIT_GROUP_APMS, BAIT_GROUP_RNA,
                            fmt_bait, fmt_baits, PATHWAY_ORDER_APMS, CMAP_APMS)
 apply_style()
 
-OUTDIR  = "/sessions/lucid-modest-goldberg/mnt/MS results/"
-DATADIR = "/sessions/lucid-modest-goldberg/mnt/outputs/"
+OUTDIR  = "output/"
+DATADIR = "data/"
 
 # ── Load data ────────────────────────────────────────────────────────────────
 df_cc    = pd.read_csv(DATADIR + "cross_bait_corr.tsv",      sep='\t')
@@ -71,7 +72,7 @@ def bait_color_bar_v(ax, baits, group_fn):
             color=group_fn(b), transform=ax.transAxes, clip_on=False))
 
 def add_equal_strips(fig, ax, baits, fn_top, fn_right, strip_in=0.09, gap_in=0.02):
-    """Add colour strips above and right of ax with the SAME physical width (strip_in inches)."""
+    """Add color strips above and right of ax with the SAME physical width (strip_in inches)."""
     pos  = ax.get_position()           # figure-fraction coords
     fw, fh = fig.get_size_inches()
     ax_w_in = pos.width  * fw          # actual axis width in inches
@@ -91,24 +92,27 @@ def add_equal_strips(fig, ax, baits, fn_top, fn_right, strip_in=0.09, gap_in=0.0
 # ════════════════════════════════════════════════════════════════════════════
 # FIGURE
 # ════════════════════════════════════════════════════════════════════════════
-fig = plt.figure(figsize=(22, 22))
+fig = plt.figure(figsize=(22, 14))
 fig.patch.set_facecolor('white')
 
 gs = gridspec.GridSpec(
     2, 2,
     figure=fig,
     height_ratios=[1, 1],
-    hspace=0.44, wspace=0.38,
+    hspace=0.04, wspace=0.12,
     left=0.08, right=0.96, top=0.93, bottom=0.06,
 )
 
-# ── Panel A: Bait-pair scatter (MS r vs RNA ρ) ───────────────────────────────
-ax_a = fig.add_subplot(gs[0, 0])
+# ── Panel A: Bait-pair scatter (MS r vs RNA ρ) — 75% height+width of cell ────
+gs_a = gridspec.GridSpecFromSubplotSpec(2, 2, subplot_spec=gs[0, 0],
+                                         height_ratios=[3, 1], width_ratios=[3, 1],
+                                         hspace=0, wspace=0)
+ax_a = fig.add_subplot(gs_a[0, 0])
 
 if 'ms_corr' in df_cc.columns and 'rna_spear' in df_cc.columns:
     ms_r   = df_cc['ms_corr'].values
     rna_rho = df_cc['rna_spear'].values
-    # Colour by functional group agreement
+    # Color by functional group agreement
     pair_col = []
     for _, row in df_cc.iterrows():
         pair_str = row.get('pair', '')
@@ -120,12 +124,12 @@ if 'ms_corr' in df_cc.columns and 'rna_spear' in df_cc.columns:
         else:
             pair_col.append('#AAAAAA')
     ax_a.scatter(ms_r, rna_rho, c=pair_col, s=22, alpha=0.75,
-                 linewidths=0.3, edgecolors='grey', zorder=3)
+                 linewidths=0.3, edgecolors='gray', zorder=3)
 elif 'ms_r' in df_cc.columns and 'rna_r' in df_cc.columns:
     ms_r   = df_cc['ms_r'].fillna(0).values
     rna_rho = df_cc['rna_r'].fillna(0).values
     ax_a.scatter(ms_r, rna_rho, c='#5B8DB8', s=22, alpha=0.7,
-                 linewidths=0.3, edgecolors='grey', zorder=3)
+                 linewidths=0.3, edgecolors='gray', zorder=3)
 else:
     # Use concordance_quadrant for a scatter of MS vs RNA correlations
     if 'ms_r' in df_quad.columns and 'rna_r' in df_quad.columns:
@@ -134,7 +138,7 @@ else:
         pair_col = ['#3A6FA3' if r1*r2 > 0 else '#C0392B'
                     for r1, r2 in zip(ms_r, rna_rho)]
         ax_a.scatter(ms_r, rna_rho, c=pair_col, s=22, alpha=0.7,
-                     linewidths=0.3, edgecolors='grey', zorder=3)
+                     linewidths=0.3, edgecolors='gray', zorder=3)
 
 ax_a.axhline(0, color='#555555', lw=0.8, ls='--')
 ax_a.axvline(0, color='#555555', lw=0.8, ls='--')
@@ -145,8 +149,8 @@ ax_a.set_title('Cross-dataset bait-pair concordance\n'
 ax_a.spines['top'].set_visible(False); ax_a.spines['right'].set_visible(False)
 same_patch  = mpatches.Patch(color='#3A6FA3', label='Same functional group')
 diff_patch  = mpatches.Patch(color='#AAAAAA', label='Different groups')
-ax_a.legend(handles=[same_patch, diff_patch], fontsize=7.5, loc='upper left', framealpha=0.9)
-ax_a.text(-0.12, 1.06, 'A', transform=ax_a.transAxes, fontsize=14, fontweight='bold')
+ax_a.legend(handles=[same_patch, diff_patch], fontsize=7.5, loc='lower right', framealpha=0.9)
+ax_a.text(-0.12, 1.06, 'A', transform=ax_a.transAxes, fontsize=16, fontweight='bold')
 
 # ── Panel B: Side-by-side bait correlation heatmaps ─────────────────────────
 # Use shared baits, identical hierarchical ordering
@@ -173,22 +177,22 @@ gs_b = gridspec.GridSpecFromSubplotSpec(1, 2, subplot_spec=gs[0, 1],
 ax_b1 = fig.add_subplot(gs_b[0])
 ax_b2 = fig.add_subplot(gs_b[1])
 
-im_b1 = ax_b1.imshow(corr_ms_c.values, aspect='equal', cmap=cmap_corr, norm=norm_corr)
+im_b1 = ax_b1.imshow(corr_ms_c.values, aspect='equal', cmap=cmap_corr, norm=norm_corr, rasterized=True)
 n_sh = len(shared_c)
 ax_b1.set_xticks(range(n_sh)); ax_b1.set_yticks(range(n_sh))
 ax_b1.set_xticklabels(fmt_baits(shared_c), fontsize=6, rotation=60, ha='right')
 ax_b1.set_yticklabels(fmt_baits(shared_c), fontsize=6)
-# All tick labels black — colour conveyed by the stage-colour strip insets
+# All tick labels black — color conveyed by the stage-color strip insets
 for lbl in ax_b1.get_xticklabels(): lbl.set_color('black')
 for lbl in ax_b1.get_yticklabels(): lbl.set_color('black')
 
-im_b2 = ax_b2.imshow(corr_rna_c.values, aspect='equal', cmap=cmap_corr, norm=norm_corr)
+im_b2 = ax_b2.imshow(corr_rna_c.values, aspect='equal', cmap=cmap_corr, norm=norm_corr, rasterized=True)
 ax_b2.set_xticks(range(n_sh)); ax_b2.set_yticks(range(n_sh))
 ax_b2.set_xticklabels(fmt_baits(shared_c), fontsize=6, rotation=60, ha='right')
 ax_b2.set_yticklabels([])
 for lbl in ax_b2.get_xticklabels(): lbl.set_color('black')
 
-# ── Pathway-stage colour bar strips — equal physical width on both axes ───────
+# ── Pathway-stage color bar strips — equal physical width on both axes ───────
 _, b1_right_space = add_equal_strips(fig, ax_b1, shared_c, grp_color_apms, grp_color_apms)
 _, b2_right_space = add_equal_strips(fig, ax_b2, shared_c, grp_color_rna,  grp_color_rna)
 
@@ -203,15 +207,18 @@ ax_b1.text(-0.18, 1.10, 'B', transform=ax_b1.transAxes, fontsize=16, fontweight=
 ax_b1.set_title('AP-MS Pearson r\n(shared baits, joint ordering)', fontsize=8.5)
 ax_b2.set_title('AP-RNA-seq Spearman ρ\n(same ordering)', fontsize=8.5)
 
-# ── Panel C: Concordance quadrant scatter plot ───────────────────────────────
-ax_c = fig.add_subplot(gs[1, 0])
+# ── Panel C: Concordance quadrant scatter plot — 75% height+width of cell ────
+gs_c = gridspec.GridSpecFromSubplotSpec(2, 2, subplot_spec=gs[1, 0],
+                                         height_ratios=[3, 1], width_ratios=[3, 1],
+                                         hspace=0, wspace=0)
+ax_c = fig.add_subplot(gs_c[0, 0])
 
-# Colour scheme: each quadrant a clearly distinct colour
+# Color scheme: each quadrant a clearly distinct color
 QUAD_COLORS = {
     'Both high':         '#1A5276',   # dark blue  — true functional complex
     'MS high, RNA low':  '#1E8449',   # dark green — stable complex, divergent RNA
     'RNA high, MS low':  '#922B21',   # dark red   — shared RNA, no stable complex
-    'Both low':          '#AAAAAA',   # grey       — unrelated
+    'Both low':          '#AAAAAA',   # gray       — unrelated
 }
 QUAD_LABELS = {
     'Both high':         'Both high (n={n})\ntrue functional complex',
@@ -230,8 +237,9 @@ def _quad_key(q_str):
 if 'ms_r' in df_quad.columns and 'rna_r' in df_quad.columns:
     df_q = df_quad.dropna(subset=['ms_r', 'rna_r']).copy()
 
-    # Determine threshold dividing lines from data if quad column present
-    ms_thr, rna_thr = 0.30, 0.30
+    # Quadrant thresholds: the same cut-offs that define the quad column in
+    # concordance_quadrant.tsv (Methods): AP-MS r > 0.35, AP-RNA-seq rho > 0.50
+    ms_thr, rna_thr = 0.35, 0.50
 
     # Plot each quadrant group separately for legend
     leg_handles = []
@@ -244,13 +252,13 @@ if 'ms_r' in df_quad.columns and 'rna_r' in df_quad.columns:
                 continue
             ax_c.scatter(grp['ms_r'], grp['rna_r'],
                          c=col, s=28, alpha=0.82,
-                         linewidths=0.4, edgecolors='grey', zorder=4)
+                         linewidths=0.4, edgecolors='gray', zorder=4)
             lbl = QUAD_LABELS[key].format(n=n)
             leg_handles.append(mpatches.Patch(color=col, label=lbl))
     else:
         ax_c.scatter(df_q['ms_r'], df_q['rna_r'],
                      c='#5B8DB8', s=28, alpha=0.8,
-                     linewidths=0.4, edgecolors='grey', zorder=4)
+                     linewidths=0.4, edgecolors='gray', zorder=4)
 
     # Quadrant dividing lines
     ax_c.axvline(ms_thr,  color='#888888', lw=0.9, ls='--', zorder=2)
@@ -262,13 +270,15 @@ if 'ms_r' in df_quad.columns and 'rna_r' in df_quad.columns:
     x_hi = df_q['ms_r'].max()
     y_lo = df_q['rna_r'].min()
     y_hi = df_q['rna_r'].max()
-    ann_kw = dict(fontsize=6.5, va='top', ha='left', clip_on=False)
-    ax_c.text(ms_thr + 0.01, y_hi,  'Both high',        color='#1A5276', **ann_kw)
-    ax_c.text(x_lo,          y_hi,  'RNA high / MS low', color='#922B21', **ann_kw)
+    # Quadrant names placed on either side of the dashed lines (above the top points
+    # and just below the horizontal line) so they do not overlap the pair labels
+    y_top = y_hi + 0.07
+    ax_c.text(ms_thr + 0.01, y_top, 'Both high',         color='#1A5276', fontsize=6.5, va='top', ha='left')
+    ax_c.text(ms_thr - 0.01, y_top, 'RNA high / MS low', color='#922B21', fontsize=6.5, va='top', ha='right')
     ax_c.text(ms_thr + 0.01, rna_thr - 0.01,
               'MS high / RNA low', color='#1E8449', fontsize=6.5, va='top', ha='left')
-    ax_c.text(x_lo,          rna_thr - 0.01,
-              'Both low',         color='#666666', fontsize=6.5, va='top', ha='left')
+    ax_c.text(ms_thr - 0.01, rna_thr - 0.01,
+              'Both low',         color='#666666', fontsize=6.5, va='top', ha='right')
 
     # Label notable bait pairs (all "Both high"; top 3 "RNA high/MS low" by rna_r)
     def _label_pair(row, color, kw=None):
@@ -304,26 +314,30 @@ else:
     ax_c.axis('off')
 
 ax_c.set_title('Concordance quadrant scatter\n'
-               '(each point = one bait pair; dashed lines = r / ρ = 0.30 threshold)',
+               '(each point = one bait pair; dashed lines: AP-MS r = 0.35, AP-RNA-seq ρ = 0.50)',
                fontsize=9)
 ax_c.spines['top'].set_visible(False); ax_c.spines['right'].set_visible(False)
-ax_c.text(-0.15, 1.06, 'C', transform=ax_c.transAxes, fontsize=14, fontweight='bold')
+ax_c.text(-0.15, 1.06, 'C', transform=ax_c.transAxes, fontsize=16, fontweight='bold')
 
 # ── Panel D: Discordance map ─────────────────────────────────────────────────
-ax_d = fig.add_subplot(gs[1, 1])
+# Use nested GridSpec so D occupies only the left half of gs[1,1],
+# matching the width of B1 or B2 (each half of gs[0,1]).
+# The right half is spacer/colorbar overflow area.
+gs_d = gridspec.GridSpecFromSubplotSpec(1, 2, subplot_spec=gs[1, 1], wspace=0.12)
+ax_d = fig.add_subplot(gs_d[0])
 # For shared baits: show difference (MS corr - RNA corr) as heatmap
 diff_mat = corr_ms_c.values - corr_rna_c.values
 np.fill_diagonal(diff_mat, 0)
 norm_d = TwoSlopeNorm(vmin=-0.8, vcenter=0, vmax=0.8)
-im_d = ax_d.imshow(diff_mat, aspect='auto', cmap='RdBu_r', norm=norm_d)
+im_d = ax_d.imshow(diff_mat, aspect='equal', cmap='RdBu_r', norm=norm_d, rasterized=True)
 ax_d.set_xticks(range(n_sh)); ax_d.set_yticks(range(n_sh))
 ax_d.set_xticklabels(fmt_baits(shared_c), fontsize=6, rotation=60, ha='right')
 ax_d.set_yticklabels(fmt_baits(shared_c), fontsize=6)
-# Tick labels all black — colour conveyed by the stage-colour strip insets
+# Tick labels all black — color conveyed by the stage-color strip insets
 for lbl in ax_d.get_xticklabels(): lbl.set_color('black')
 for lbl in ax_d.get_yticklabels(): lbl.set_color('black')
 
-# Pathway-stage colour bar strips — equal physical width
+# Pathway-stage color bar strips — equal physical width
 _, d_right_space = add_equal_strips(fig, ax_d, shared_c, grp_color_rna, grp_color_rna)
 
 # Colorbar as cax inset — does not resize ax_d
@@ -335,7 +349,7 @@ cb_d.set_label('Δ correlation\n(AP-MS − RNA-seq)\nred = MS-high\nblue = RNA-h
 ax_d.set_title('Cross-dataset discordance map\n'
                '(Δ correlation: positive = higher in AP-MS, negative = higher in AP-RNA-seq)',
                fontsize=9)
-ax_d.text(-0.16, 1.06, 'D', transform=ax_d.transAxes, fontsize=14, fontweight='bold')
+ax_d.text(-0.16, 1.06, 'D', transform=ax_d.transAxes, fontsize=16, fontweight='bold')
 
 fig.suptitle('Supplementary Figure  |  Cross-Dataset Concordance: AP-MS vs. AP-RNA-seq\n'
              '(Pearson r in AP-MS vs. Spearman ρ in AP-RNA-seq, shared baits)',
@@ -343,5 +357,9 @@ fig.suptitle('Supplementary Figure  |  Cross-Dataset Concordance: AP-MS vs. AP-R
 
 out = OUTDIR + "figureS_CrossDataset.pdf"
 fig.savefig(out, bbox_inches='tight', facecolor='white', dpi=150)
+# Panel C alone, for placement in the assembled figure
+_bb = ax_c.get_tightbbox(fig.canvas.get_renderer()).transformed(fig.dpi_scale_trans.inverted())
+fig.savefig(OUTDIR + "figureS_CrossDataset_panelC.pdf", bbox_inches=_bb.expanded(1.03, 1.03),
+            facecolor='white')
 plt.close()
 print(f"Saved: {out}")
